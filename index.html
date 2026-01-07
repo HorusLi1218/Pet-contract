@@ -224,11 +224,11 @@
     <div id="sig-fullscreen-modal">
         <div class="flex justify-between items-center p-4 bg-slate-900 text-white">
             <button onclick="closeFsSig(false)" class="text-sm opacity-70">取消</button>
-            <span class="text-sm font-bold tracking-widest">請橫向簽名</span>
+            <span class="text-sm font-bold tracking-widest"></span>
             <button onclick="closeFsSig(true)" class="bg-orange-500 px-6 py-2 rounded-full text-sm font-bold">完成</button>
         </div>
         <div class="fs-canvas-container">
-            <div class="fs-hint">橫向書寫區域</div>
+            <div class="fs-hint"></div>
             <canvas id="fs-canvas"></canvas>
         </div>
         <div class="p-4 bg-slate-100 flex justify-center">
@@ -414,7 +414,7 @@
                 const { error } = await client.from('contracts').insert([data]);
                 if (error) throw error;
                 await emailjs.send("service_qwect9i", "template_mrp0x8n", { ...data, price: Number(data.price).toLocaleString(), created_at: new Date().toLocaleString() });
-                alert("✨ 簽署完成！"); location.reload();
+                alert("✨ 簽署完成，已將副本寄送至您填寫之電子信箱！"); location.reload();
             } catch (err) { alert("儲存失敗: " + err.message); btn.disabled = false; btn.innerText = "確認提交約定單"; }
         }
 
