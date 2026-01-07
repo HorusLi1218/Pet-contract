@@ -315,25 +315,27 @@ async function deleteRecord(id, petName) {
 // --- 修改功能 ---
 async function editRecord(idx) {
     const i = allRecords[idx];
-    // 這裡使用簡單的 prompt 進行示範，若要精緻可製作 Modal
-    const newPrice = prompt(`修改「${i.pet_name}」的服務金額：`, i.price);
-    const newTime = prompt(`修改預計接回時間：`, i.pickup_time);
+    const oldPrice = i.price;
+    const newPrice = prompt(`修改「${i.pet_name}」的服務金額\n目前金額：NT$ ${oldPrice.toLocaleString()}\n請輸入新金額：`, oldPrice);
 
-    if (newPrice === null || newTime === null) return; // 使用者取消
+    // 檢查：取消、沒填、或填寫非數字則不處理
+    if (newPrice === null || newPrice.trim() === "" || isNaN(newPrice)) return;
+
+    const finalPrice = parseInt(newPrice);
 
     try {
-        const { error } = await client.from('contracts')
-            .update({ 
-                price: parseInt(newPrice) || 0, 
-                pickup_time: newTime 
-            })
-            .eq('id', i.id);
+        const { error } = await client
+            .from('contracts')
+            .update({ price: finalPrice }) // 只更新金額
+            .eq('id', i.id); // 確保對應正確的 ID
 
         if (error) throw error;
-        alert("✅ 資料已成功更新");
-        loadAdmin(); // 重新整理列表
+        
+        alert(`✅ 金額已成功修改為：NT$ ${finalPrice.toLocaleString()}`);
+        await loadAdmin(); // 重新讀取資料，讓表格顯示最新金額
     } catch (err) {
-        alert("更新失敗：" + err.message);
+        console.error("Update Error:", err);
+        alert("修改失敗：" + err.message);
     }
 }
         const client = supabase.createClient('https://dkavdfardalijxkqcopi.supabase.co', 'sb_publishable_o7xY-xRVujJP6TFEgEbzIg_4UJlUCVX');
@@ -536,16 +538,23 @@ async function editRecord(idx) {
 function renderAdminList(list) {
     const tbody = document.getElementById('adminList');
     tbody.innerHTML = list.map((i, idx) => `
-        <tr class="hover:bg-white/5">
-            <td class="px-8 py-8 font-bold text-sm">${i.pet_name}<br><span class="text-orange-500 text-[10px] opacity-70">${i.owner_name}</span></td>
+        <tr class="hover:bg-white/5 transition-colors">
+            <td class="px-8 py-8 font-bold text-sm">
+                ${i.pet_name}<br>
+                <span class="text-orange-500 text-[10px] opacity-70">${i.owner_name}</span>
+            </td>
             <td class="px-8 py-8"><span class="text-xs opacity-60">${i.services}</span></td>
             <td class="px-8 py-8 text-center text-sm font-bold text-blue-400">${i.pickup_time}</td>
             <td class="px-8 py-8 text-center font-black text-orange-500 text-sm">NT$ ${Number(i.price).toLocaleString()}</td>
-            <td class="px-8 py-8 text-center"><img src="${i.signature_data}" class="h-10 mx-auto bg-white rounded p-1"></td>
-            <td class="px-8 py-8 text-right space-x-2">
-                <button onclick="showDetail(${idx})" class="text-orange-500 font-bold border border-orange-500/30 px-4 py-2 rounded-lg text-[10px]">詳情</button>
-                <button onclick="editRecord(${idx})" class="text-blue-400 font-bold border border-blue-400/30 px-4 py-2 rounded-lg text-[10px]">修改</button>
-                <button onclick="deleteRecord('${i.id}', '${i.pet_name}')" class="text-red-400 font-bold border border-red-400/30 px-4 py-2 rounded-lg text-[10px]">刪除</button>
+            <td class="px-8 py-8 text-center">
+                <img src="${i.signature_data}" class="h-10 mx-auto bg-white rounded p-1 shadow-sm">
+            </td>
+            <td class="px-8 py-8 text-right">
+                <div class="flex justify-end gap-2">
+                    <button onclick="showDetail(${idx})" class="text-orange-500 font-bold border border-orange-500/30 px-3 py-2 rounded-lg text-[10px] hover:bg-orange-500/10 transition-all">詳情</button>
+                    <button onclick="editRecord(${idx})" class="text-blue-400 font-bold border border-blue-400/30 px-3 py-2 rounded-lg text-[10px] hover:bg-blue-400/10 transition-all">改金額</button>
+                    <button onclick="deleteRecord('${i.id}', '${i.pet_name}')" class="text-red-400 font-bold border border-red-400/30 px-3 py-2 rounded-lg text-[10px] hover:bg-red-400/10 transition-all">刪除</button>
+                </div>
             </td>
         </tr>`).join('');
 }
