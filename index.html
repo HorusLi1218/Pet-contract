@@ -118,6 +118,7 @@
 
                             <div class="bg-white/5 p-6 rounded-[1.5rem] border border-white/10 space-y-6">
                                 <div class="space-y-3 text-white">
+                                 
                                     <span class="text-[10px] font-bold opacity-40 uppercase px-2">晶片狀態 *</span>
                                     <div class="input-group">
                                         <input type="text" id="chip_no" class="form-input !text-orange-500 font-bold" placeholder="請輸入10或15碼數字" onblur="validateInput(this, 'chip')">
@@ -125,12 +126,12 @@
                                     </div>
                                     <div class="grid grid-cols-2 gap-2 pill-group">
                                         <label>
-                                            <input type="radio" name="chip_status" id="has_no_chip" onchange="toggleChipStatus('none')">
-                                            <span class="pill-item w-full !py-3">無晶片</span>
+                                            <input type="radio" name="chip_status" id="has_chip_unknown" onchange="toggleChipStatus('unknown')">
+                                            <span class="pill-item w-full !py-3">有晶片(號碼不詳)</span>
                                         </label>
                                         <label>
-                                            <input type="radio" name="chip_status" id="has_chip_unknown" onchange="toggleChipStatus('unknown')">
-                                            <span class="pill-item w-full !py-3">有晶片/號碼不詳</span>
+                                            <input type="radio" name="chip_status" id="has_no_chip" onchange="toggleChipStatus('none')">
+                                            <span class="pill-item w-full !py-3">無晶片</span>
                                         </label>
                                     </div>
                                 </div>
