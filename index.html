@@ -73,7 +73,7 @@
         <div class="max-w-xl mx-auto">
             <div class="glass-card shadow-2xl overflow-hidden border border-white/10">
                 <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-8 text-center text-white relative">
-                    <h1 class="text-2xl md:text-3xl font-black serif-title tracking-widest relative">寵物美容資訊表/h1>
+                    <h1 class="text-2xl md:text-3xl font-black serif-title tracking-widest relative">寵物美容資訊表</h1>
                     <p class="text-[9px] font-bold mt-2 tracking-[0.4em] uppercase opacity-70 relative">Digital Grooming Record</p>
                 </div>
 
@@ -102,7 +102,7 @@
                                     <div class="input-group"><input type="text" id="emergency_name" class="form-input" placeholder="緊急聯絡人 *" required></div>
                                     <div class="input-group"><input type="tel" id="emergency_tel" class="form-input num-only" placeholder="緊急電話" onblur="validateInput(this, 'phone')"><div class="error-msg">格式不符</div></div>
                                 </div>
-                                <input type="text" id="clinic" class="form-input" placeholder="指定就醫醫院(若無則送交特約醫院)">
+                                <input type="text" id="clinic" class="form-input" placeholder="指定就醫醫院(若無則由本店送交特約醫院)">
                             </div>
                         </section>
 
@@ -193,22 +193,58 @@
                             </div>
                         </section>
 
-                        <section>
-                            <p class="section-header uppercase">五、 簽署聲明與備註</p>
-                            <div class="bg-white/5 p-6 rounded-[1.5rem] border border-white/10 text-[13px] leading-relaxed text-slate-300 space-y-4">
-                                <p>● 本人（甲方）已詳閱本店LINE官方帳號公告之定型化契約全條文。</p>
-                                <p>● 甲方已誠實告知寵物之健康與行為狀況。若因隱瞞導致意外，乙方不負損害賠償責任。</p>
-                                <p class="text-orange-400 font-bold italic">※ 預計金額為基礎報價，若現場發現嚴重打結等狀況，將另行告知加價。</p>
+                        <section class="mb-8">
+                            <p class="section-header uppercase text-orange-500 font-bold mb-4">五、 簽署聲明與法律約定</p>
+                            <div class="glass-card p-6 border border-white/10 space-y-5">
+                                <button type="button" onclick="handleToggleLegal()" class="w-full flex justify-between items-center bg-white/5 hover:bg-white/10 p-4 rounded-2xl border border-white/5 transition-all group focus:outline-none">
+                                    <span class="text-sm font-bold text-slate-300">閱覽完整美容服務定型化契約條款</span>
+                                    <i id="legal-chevron" class="fas fa-chevron-down text-orange-500 transition-transform duration-300"></i>
+                                </button>
+
+                                <div id="legal-drawer" style="max-height: 0px;" class="overflow-hidden transition-all duration-500 ease-in-out">
+                                    <div class="p-5 bg-black/40 rounded-2xl text-[13px] leading-relaxed text-slate-400 space-y-5 border border-white/5 mb-4 shadow-inner">
+                                        <section>
+                                            <h4 class="text-orange-500 font-bold mb-1">第一條 (契約目的)</h4>
+                                            <p>本服務為犬貓美容，不涉及醫療行為。乙方環境維持安全、通風、清潔。</p>
+                                        </section>
+                                        <section>
+                                            <h4 class="text-orange-500 font-bold mb-1">第五條 (健康告知)</h4>
+                                            <p>甲方應誠實告知寵物病史與攻擊性。若因隱瞞導致意外，乙方不負損害賠償責任。</p>
+                                        </section>
+                                        <section>
+                                            <h4 class="text-orange-500 font-bold mb-1">退費與逾時規範</h4>
+                                            <p>● 終止契約退費按比例計算，<span class="text-white font-bold">不收取手續費</span>。</p>
+                                            <p>● 逾時 30 分鐘以上，<span class="text-white font-bold">依照價目表公告之 安親費 額外收費</span>。</p>
+                                        </section>
+                                        <section>
+                                            <h4 class="text-orange-500 font-bold mb-1">第十五條 (履約保障)</h4>
+                                            <p>預收費用累計金額在台幣一萬元以下，<span class="text-white font-bold">依法免提供履約保障</span>。</p>
+                                        </section>
+                                        <p class="text-[10px] opacity-40 text-center pt-2 border-t border-white/5">其餘細節依行政院農委會定型化契約範本辦理</p>
+                                    </div>
+                                </div>
+
+                                <div class="text-[12px] text-slate-500 px-2 space-y-2">
+                                    <p>● 經甲乙雙方合意約定，由甲方即時閱覽理解本契約內容並簽署。</p>
+                                    <p>● 本人已確認預計接回時間與服務金額無誤。</p>
+                                </div>
+
+                                <label class="flex items-center gap-4 p-4 bg-orange-500/10 rounded-2xl cursor-pointer border border-orange-500/20 hover:bg-orange-500/20 transition-all group">
+                                    <input type="checkbox" id="legal_agree" class="w-6 h-6 rounded-lg accent-orange-500 cursor-pointer" required>
+                                    <span class="text-sm font-black text-white group-hover:text-orange-400">我已詳閱並同意以上契約條款內容 *</span>
+                                </label>
                             </div>
                         </section>
 
-                        <section class="space-y-4">
+                        <section>
                             <p class="section-header uppercase">六、 甲方電子簽署</p>
                             <div onclick="openFsSig()" class="sig-wrapper h-64 shadow-inner">
                                 <div class="signature-hint" id="sig-hint-text">點擊開啟簽名</div>
                                 <img id="sig-preview-img" alt="簽名預覽">
                             </div>
-                            <button type="button" onclick="clearSig()" class="text-[10px] opacity-30 font-bold uppercase tracking-widest hover:opacity-100 text-white flex items-center gap-2"><i class="fas fa-eraser"></i> 重新簽署</button>
+                            <button type="button" onclick="clearSig()" class="mt-4 text-[10px] opacity-30 font-bold uppercase tracking-widest hover:opacity-100 text-white flex items-center gap-2">
+                                <i class="fas fa-eraser"></i> 重新簽署
+                            </button>
                         </section>
 
                         <button type="button" onclick="handleSave()" id="btn" class="btn-submit w-full bg-orange-500 hover:bg-orange-600 text-white py-8 rounded-[2rem] font-black text-xl shadow-xl transition-all active:scale-[0.98]">確認提交約定單</button>
@@ -221,11 +257,11 @@
     <div id="sig-fullscreen-modal">
         <div class="flex justify-between items-center p-4 bg-slate-900 text-white">
             <button onclick="closeFsSig(false)" class="text-sm opacity-70">取消</button>
-            <span class="text-sm font-bold tracking-widest"></span>
+            <span class="text-sm font-bold tracking-widest">電子簽署區域</span>
             <button onclick="closeFsSig(true)" class="bg-orange-500 px-6 py-2 rounded-full text-sm font-bold">完成</button>
         </div>
         <div class="fs-canvas-container">
-            <div class="fs-hint"></div>
+            <div class="fs-hint">請在此處簽名</div>
             <canvas id="fs-canvas"></canvas>
         </div>
         <div class="p-4 bg-slate-100 flex justify-center">
@@ -272,25 +308,32 @@
 
         let canvas, ctx, drawing = false, hasSigned = false, allRecords = [];
 
+        function handleToggleLegal() {
+            const drawer = document.getElementById('legal-drawer');
+            const chevron = document.getElementById('legal-chevron');
+            if (drawer.style.maxHeight === '0px' || !drawer.style.maxHeight) {
+                drawer.style.maxHeight = drawer.scrollHeight + "px";
+                chevron.style.transform = "rotate(180deg)";
+            } else {
+                drawer.style.maxHeight = "0px";
+                chevron.style.transform = "rotate(0deg)";
+            }
+        }
+
         function init() {
             canvas = document.getElementById('fs-canvas');
             ctx = canvas.getContext('2d');
-            
             document.querySelectorAll('.num-only').forEach(el => { el.addEventListener('input', function() { this.value = this.value.replace(/[^0-9]/g, ''); }); });
-            
             document.getElementById('other_trig').onchange = (e) => document.getElementById('other_val').classList.toggle('hidden', !e.target.checked);
-            
             document.getElementById('chip_no').addEventListener('focus', () => {
                 document.getElementsByName('chip_status').forEach(r => r.checked = false);
             });
-
             if (sessionStorage.getItem('isAdmin') === 'true') { showAdminView(); }
         }
 
         function openFsSig() {
             document.getElementById('sig-fullscreen-modal').style.display = 'flex';
             resizeFsCanvas();
-            
             const getPointerPos = (e) => {
                 const rect = canvas.getBoundingClientRect();
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -300,7 +343,6 @@
             const start = (e) => { drawing = true; hasSigned = true; ctx.beginPath(); const p = getPointerPos(e); ctx.moveTo(p.x, p.y); e.preventDefault(); };
             const move = (e) => { if(!drawing) return; const p = getPointerPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); };
             const stop = () => { drawing = false; };
-
             canvas.onmousedown = start; canvas.onmousemove = move; window.onmouseup = stop;
             canvas.ontouchstart = start; canvas.ontouchmove = move; window.ontouchend = stop;
         }
@@ -317,9 +359,7 @@
 
         function closeFsSig(save) {
             if (save) {
-                if (!hasSigned) {
-                    alert("請簽名後再點選完成"); return;
-                }
+                if (!hasSigned) { alert("請簽名後再點選完成"); return; }
                 const imgData = canvas.toDataURL("image/png");
                 document.getElementById('sig-preview-img').src = imgData;
                 document.getElementById('sig-preview-img').style.display = 'block';
@@ -363,94 +403,67 @@
 
         function toggleIllDetail(show) { document.getElementById('ill_detail_container').classList.toggle('open', show); }
 
-async function handleSave() {
-    // 1. 基礎檢核
-    if(document.querySelectorAll('.input-invalid').length > 0) { alert("⚠️ 格式有誤。"); return; }
-    if(!document.getElementById('contract-form').checkValidity() || !hasSigned) { alert("⚠️ 請填寫完整並簽名。"); return; }
-    
-    const btn = document.getElementById('btn'); 
-    btn.disabled = true; 
-    btn.innerHTML = '正在提交...';
-    
-    // 取得原始簽名圖片 (高品質 PNG，用於存入資料庫)
-    const originalSig = canvas.toDataURL("image/png");
+        async function handleSave() {
+            if(document.querySelectorAll('.input-invalid').length > 0) { alert("⚠️ 格式有誤。"); return; }
+            if(!document.getElementById('contract-form').checkValidity() || !hasSigned) { alert("⚠️ 請填寫完整、勾選同意並簽名。"); return; }
+            const btn = document.getElementById('btn'); 
+            btn.disabled = true; btn.innerHTML = '正在提交...';
+            const originalSig = canvas.toDataURL("image/png");
+            const data = {
+                owner_name: document.getElementById('owner_name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                id_number: document.getElementById('id_number').value.trim().toUpperCase(),
+                phone: document.getElementById('phone').value.trim(),
+                address: document.getElementById('address').value.trim(),
+                emergency_name: document.getElementById('emergency_name').value.trim(),
+                emergency_tel: document.getElementById('emergency_tel').value.trim(),
+                pet_name: document.getElementById('pet_name').value.trim(),
+                breed: document.getElementById('breed').value.trim() || "未填寫",
+                color: document.getElementById('color').value.trim() || "未填寫",
+                chip_no: document.getElementById('chip_no').value.trim(),
+                clinic: document.getElementById('clinic').value.trim() || "無",
+                sex: document.querySelector('input[name="sex"]:checked')?.value,
+                fix: document.querySelector('input[name="fix"]:checked')?.value,
+                p_human: document.querySelector('input[name="p_human"]:checked')?.value,
+                p_dog: document.querySelector('input[name="p_dog"]:checked')?.value,
+                p_atk: document.querySelector('input[name="p_atk"]:checked')?.value,
+                p_ill: document.querySelector('input[name="p_ill"]:checked')?.value,
+                ill_detail: document.getElementById('ill_detail').value.trim() || "無",
+                services: Array.from(document.querySelectorAll('input[name="service"]:checked')).map(el => el.value).join(', ') || "未勾選",
+                price: parseInt(document.getElementById('price').value) || 0,
+                pickup_time: document.getElementById('pickup_time').value || "LINE通知",
+                signature_data: originalSig,
+                created_at: new Date().toISOString()
+            };
+            try {
+                const { error } = await client.from('contracts').insert([data]);
+                if (error) throw error;
+                try {
+                    const tempCanvas = document.createElement('canvas');
+                    const tempCtx = tempCanvas.getContext('2d');
+                    tempCanvas.width = canvas.width; tempCanvas.height = canvas.height;
+                    tempCtx.fillStyle = '#FFFFFF'; tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+                    tempCtx.drawImage(canvas, 0, 0);
+                    const mailSig = tempCanvas.toDataURL("image/jpeg", 0.3);
+                    await emailjs.send("service_qwect9i", "template_mrp0x8n", { 
+                        ...data, signature_data: mailSig, price: Number(data.price).toLocaleString(), created_at: new Date().toLocaleString() 
+                    });
+                    alert("✨ 簽署完成，已將副本寄送至您填寫之電子信箱！");
+                } catch (mailErr) { alert("✨ 簽署完成！(資料已存入系統)"); }
+                location.reload();
+            } catch (err) { alert("儲存失敗: " + err.message); btn.disabled = false; btn.innerText = "確認提交約定單"; }
+        }
 
-    const data = {
-        owner_name: document.getElementById('owner_name').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        id_number: document.getElementById('id_number').value.trim().toUpperCase(),
-        phone: document.getElementById('phone').value.trim(),
-        address: document.getElementById('address').value.trim(),
-        emergency_name: document.getElementById('emergency_name').value.trim(),
-        emergency_tel: document.getElementById('emergency_tel').value.trim(),
-        pet_name: document.getElementById('pet_name').value.trim(),
-        breed: document.getElementById('breed').value.trim() || "未填寫",
-        color: document.getElementById('color').value.trim() || "未填寫",
-        chip_no: document.getElementById('chip_no').value.trim(),
-        clinic: document.getElementById('clinic').value.trim() || "無",
-        sex: document.querySelector('input[name="sex"]:checked')?.value,
-        fix: document.querySelector('input[name="fix"]:checked')?.value,
-        p_human: document.querySelector('input[name="p_human"]:checked')?.value,
-        p_dog: document.querySelector('input[name="p_dog"]:checked')?.value,
-        p_atk: document.querySelector('input[name="p_atk"]:checked')?.value,
-        p_ill: document.querySelector('input[name="p_ill"]:checked')?.value,
-        ill_detail: document.getElementById('ill_detail').value.trim() || "無",
-        services: Array.from(document.querySelectorAll('input[name="service"]:checked')).map(el => el.value).join(', ') || "未勾選",
-        price: parseInt(document.getElementById('price').value) || 0,
-        pickup_time: document.getElementById('pickup_time').value || "LINE通知",
-        signature_data: originalSig, // 資料庫存入原始高品質圖
-        created_at: new Date().toISOString()
-    };
-
-try {
-    // 第一步：先存入 Supabase (維持原樣高品質 PNG)
-    const { error } = await client.from('contracts').insert([data]);
-    if (error) throw error;
-
-    // 第二步：單獨處理寄信 (修正黑底並壓縮)
-    try {
-        const tempCanvas = document.createElement('canvas');
-        const tempCtx = tempCanvas.getContext('2d');
-        tempCanvas.width = canvas.width;
-        tempCanvas.height = canvas.height;
-        tempCtx.fillStyle = '#FFFFFF';
-        tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-        tempCtx.drawImage(canvas, 0, 0);
-        
-        const mailSig = tempCanvas.toDataURL("image/jpeg", 0.3);
-        
-        await emailjs.send("service_qwect9i", "template_mrp0x8n", { 
-            ...data, 
-            signature_data: mailSig, 
-            price: Number(data.price).toLocaleString(), 
-            created_at: new Date().toLocaleString() 
-        });
-        alert("✨ 簽署完成，已將副本寄送至您填寫之電子信箱！");
-    } catch (mailErr) {
-        console.warn("郵件寄送報錯，但合約已存入資料庫：", mailErr);
-        alert("✨ 簽署完成！\n(提示：您的資料已成功存入管理系統。)");
-    }
-    location.reload();
-} catch (err) {
-    // ... 原本的錯誤處理
-        console.error("真正的儲存失敗原因：", err);
-        alert("儲存失敗: " + (err.message || "請檢查網路連線或欄位設定")); 
-        btn.disabled = false; 
-        btn.innerText = "確認提交約定單"; 
-    }
-}
         function checkAdmin() {
             if (sessionStorage.getItem('isAdmin') === 'true') { showAdminView(); return; }
             const userInput = prompt("管理金鑰?");
             if (userInput && btoa(userInput.trim()) === "ODg4OA==") {
-                sessionStorage.setItem('isAdmin', 'true');
-                showAdminView();
+                sessionStorage.setItem('isAdmin', 'true'); showAdminView();
             }
         }
         function showAdminView() {
             document.getElementById('clientView').style.display='none'; 
-            document.getElementById('adminView').style.display='block'; 
-            loadAdmin();
+            document.getElementById('adminView').style.display='block'; loadAdmin();
         }
         async function loadAdmin() {
             const { data, error } = await client.from('contracts').select('*').order('created_at', { ascending: false });
@@ -469,57 +482,43 @@ try {
                 </tr>`).join('');
         }
         function logoutAdmin() { sessionStorage.removeItem('isAdmin'); location.reload(); }
-        
         function filterRecords(val) {
             const s = val.toLowerCase();
-            const f = allRecords.filter(i => 
-                i.pet_name.toLowerCase().includes(s) || 
-                i.owner_name.toLowerCase().includes(s)
-            );
+            const f = allRecords.filter(i => i.pet_name.toLowerCase().includes(s) || i.owner_name.toLowerCase().includes(s));
             renderAdminList(f);
         }
-
-function showDetail(idx) {
+        function showDetail(idx) {
             const i = allRecords[idx];
             document.getElementById('detailContent').innerHTML = `
                 <div class="space-y-6 text-sm text-slate-800 pb-10">
                     <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
                         <p class="text-orange-600 font-black border-b border-orange-100 pb-2 mb-4 uppercase text-xs tracking-widest">一、 飼主完整資料</p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-4">
-                            <p><b>飼主姓名：</b> ${i.owner_name}</p>
-                            <p><b>身分證號：</b> ${i.id_number}</p>
-                            <p><b>聯絡手機：</b> ${i.phone}</p>
-                            <p><b>電子郵件：</b> ${i.email}</p>
+                            <p><b>飼主姓名：</b> ${i.owner_name}</p><p><b>身分證號：</b> ${i.id_number}</p>
+                            <p><b>聯絡手機：</b> ${i.phone}</p><p><b>電子郵件：</b> ${i.email}</p>
                             <p class="sm:col-span-2"><b>通訊地址：</b> ${i.address}</p>
-                            <p><b>緊急聯絡人：</b> ${i.emergency_name}</p>
-                            <p><b>緊急電話：</b> ${i.emergency_tel || '未填寫'}</p>
+                            <p><b>緊急聯絡人：</b> ${i.emergency_name}</p><p><b>緊急電話：</b> ${i.emergency_tel || '未填寫'}</p>
                             <p class="sm:col-span-2"><b>指定就醫：</b> ${i.clinic || '無'}</p>
                         </div>
                     </div>
-
                     <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
                         <p class="text-orange-600 font-black border-b border-orange-100 pb-2 mb-4 uppercase text-xs tracking-widest">二、 寵物完整資料</p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-4">
-                            <p><b>寵物名字：</b> ${i.pet_name}</p>
-                            <p><b>品種花色：</b> ${i.breed} / ${i.color}</p>
-                            <p><b>性別：</b> ${i.sex}</p>
-                            <p><b>結紮：</b> ${i.fix}</p>
+                            <p><b>寵物名字：</b> ${i.pet_name}</p><p><b>品種花色：</b> ${i.breed} / ${i.color}</p>
+                            <p><b>性別：</b> ${i.sex}</p><p><b>結紮：</b> ${i.fix}</p>
                             <p class="sm:col-span-2"><b>晶片號碼：</b> ${i.chip_no}</p>
                             <p class="sm:col-span-2"><b>性格特徵：</b> 親人(${i.p_human}) · 親狗(${i.p_dog}) · 具攻擊性(${i.p_atk})</p>
                             <p class="sm:col-span-2"><b>過往病史：</b> ${i.p_ill === '有' ? `<span class="text-red-500 font-bold">${i.ill_detail}</span>` : '無'}</p>
                         </div>
                     </div>
-
                     <div class="bg-orange-50 p-6 rounded-2xl border border-orange-100">
                         <p class="text-orange-600 font-black border-b border-orange-200 pb-2 mb-4 uppercase text-xs tracking-widest">三、 本次服務約定</p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-4">
                             <p class="sm:col-span-2"><b>服務項目：</b> <span class="text-orange-700 font-bold">${i.services}</span></p>
                             <p><b>預計接回：</b> <span class="text-blue-600 font-bold">${i.pickup_time}</span></p>
                             <p><b>預估金額：</b> <span class="text-orange-600 font-black">NT$ ${Number(i.price).toLocaleString()}</span></p>
-                            <p class="sm:col-span-2 text-[11px] text-slate-400"><b>簽署時間：</b> ${new Date(i.created_at).toLocaleString()}</p>
                         </div>
                     </div>
-
                     <div class="text-center p-6 border-2 border-dashed border-slate-200 rounded-2xl bg-white">
                         <p class="text-[10px] text-slate-400 mb-2 uppercase tracking-widest">甲方簽署樣本</p>
                         <img src="${i.signature_data}" class="max-h-48 mx-auto" alt="顧客簽名">
@@ -527,12 +526,7 @@ function showDetail(idx) {
                 </div>`;
             document.getElementById('detailModal').style.display = 'flex';
         }
-        
         window.onload = init;
     </script>
 </body>
 </html>
-
-
-
-
