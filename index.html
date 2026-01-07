@@ -108,7 +108,7 @@
                                 <div class="space-y-3 text-white">
                                     <span class="text-[10px] font-bold opacity-40 uppercase px-2">晶片號碼 *</span>
                                     <div class="input-group">
-                                        <input type="text" id="chip_no" class="form-input !text-orange-500 font-bold" placeholder="請輸入10或15碼數字" onblur="validateInput(this, 'chip')">
+                                        <input type="tel" id="chip_no" class="form-input !text-orange-500 font-bold" placeholder="請輸入10或15碼數字" onblur="validateInput(this, 'chip')">
                                         <div class="error-msg">請輸入正確的10或15碼數字</div>
                                     </div>
                                     <div class="grid grid-cols-2 gap-2 pill-group">
@@ -158,7 +158,7 @@
                                     </label>
                                     <input type="time" id="pickup_time" class="form-input !bg-slate-950/80 !border-orange-500/30 text-2xl font-black text-orange-500 py-4">
                                     <p class="text-[10px] text-orange-300 font-bold mt-1 px-1">
-                                        <i class="fas fa-info-circle mr-1"></i>● 逾時 30 分鐘以上，依照價目表公告之 安親費 額外收費。
+                                        <i class="fas fa-info-circle mr-1"></i>逾時 30 分鐘以上，依照價目表公告之 安親費 額外收費。
                                     </p>
                                 </div>
 
@@ -168,10 +168,10 @@
                                     </label>
                                     <div class="flex items-center gap-3 bg-slate-950/80 border border-orange-500/30 rounded-xl px-4 py-2 focus-within:border-orange-500 transition-all">
                                         <span class="text-orange-500 font-bold text-lg">NT$</span>
-                                        <input id="price" type="number" value="0" onclick="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'" class="bg-transparent text-3xl font-black text-orange-500 outline-none w-full text-right num-only" required>
+                                        <input id="price" type="tel" value="0" onclick="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'" class="bg-transparent text-3xl font-black text-orange-500 outline-none w-full text-right num-only" required>
                                     </div>
                                     <p class="text-[10px] text-orange-300 font-bold mt-1 px-1">
-                                        <i class="fas fa-exclamation-triangle mr-1"></i>※ 預計金額為基礎報價，若現場發現嚴重打結等狀況，將另行告知加價。
+                                        <i class="fas fa-exclamation-triangle mr-1"></i>此金額為基礎報價，若現場發現嚴重打結、寄生蟲等狀況，將另行告知加價。
                                     </p>
                                 </div>
                             </div>
@@ -283,7 +283,7 @@
                             <th class="px-8 py-6">寵物 / 飼主</th>
                             <th class="px-8 py-6">服務項目</th>
                             <th class="px-8 py-6 text-center">預計接回</th>
-                            <th class="px-8 py-6 text-center">預估金額</th>
+                            <th class="px-8 py-6 text-center">本次金額</th>
                             <th class="px-8 py-6 text-center">簽名</th>
                             <th class="px-8 py-6 text-right">操作</th>
                         </tr>
@@ -725,5 +725,3 @@ function showDetail(idx) {
     </script>
 </body>
 </html>
-
-
