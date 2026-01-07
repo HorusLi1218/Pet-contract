@@ -517,87 +517,91 @@ phoneInput.addEventListener('blur', function() {
 
         function toggleIllDetail(show) { document.getElementById('ill_detail_container').classList.toggle('open', show); }
 
-        async function handleSave() {
-            const form = document.getElementById('contract-form');
-            const btn = document.getElementById('btn');
-            const priceInput = document.getElementById('price');
-            const priceVal = parseInt(priceInput.value);
+async function handleSave() {
+    const form = document.getElementById('contract-form');
+    const btn = document.getElementById('btn');
+    const priceInput = document.getElementById('price');
+    const priceVal = parseInt(priceInput.value);
+    
+    // 取得畫布
+    const signatureCanvas = document.getElementById('fs-canvas');
 
-            // 1. 金額檢核 (放在最前面，沒過就直接擋掉)
-            if (isNaN(priceVal) || priceVal <= 0) {
-                alert("⚠️ 請輸入有效的服務金額！\n目前金額不能為 0 或空值。");
-                priceInput.focus();
-                return; 
-            }            // 1. 驗證格式與必填項
-            if (document.querySelectorAll('.input-invalid').length > 0 || !form.checkValidity() || !hasSigned) {
-                alert("⚠️ 請檢查格式是否正確、勾選同意並完成簽名。");
+    // 1. 基本驗證
+    if (isNaN(priceVal) || priceVal <= 0) {
+        alert("⚠️ 請輸入有效的服務金額！");
+        priceInput.focus();
+        return; 
+    }
+    if (document.querySelectorAll('.input-invalid').length > 0 || !form.checkValidity() || !hasSigned) {
+        alert("⚠️ 請檢查格式是否正確、勾選同意並完成簽名。");
+        return; 
+    }
 
-                // 自動捲動至第一個錯誤欄位
-                const firstInvalid = document.querySelector('.input-invalid, :invalid');
-                if (firstInvalid) {
-                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    setTimeout(() => firstInvalid.focus(), 500);
-                }
-                return; 
-            }
+    btn.disabled = true; 
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>正在提交...';
 
-            // 2. 準備提交
-            btn.disabled = true; 
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>正在提交...';
+    // 取得簽名 Base64
+    const originalSig = signatureCanvas.toDataURL("image/png");
 
-            const originalSig = canvas.toDataURL("image/png");
-            const data = {
-                owner_name: document.getElementById('owner_name').value.trim(),
-                email: document.getElementById('email').value.trim(),
-                id_number: document.getElementById('id_number').value.trim().toUpperCase(),
-                phone: document.getElementById('phone').value.trim(),
-                address: document.getElementById('address').value.trim(),
-                emergency_name: document.getElementById('emergency_name').value.trim(),
-                emergency_tel: document.getElementById('emergency_tel').value.trim(),
-                pet_name: document.getElementById('pet_name').value.trim(),
-                breed: document.getElementById('breed').value.trim() || "未填寫",
-                color: document.getElementById('color').value.trim() || "未填寫",
-                chip_no: document.getElementById('chip_no').value.trim(),
-                clinic: document.getElementById('clinic').value.trim() || "無",
-                sex: document.querySelector('input[name="sex"]:checked')?.value,
-                fix: document.querySelector('input[name="fix"]:checked')?.value,
-                p_human: document.querySelector('input[name="p_human"]:checked')?.value,
-                p_dog: document.querySelector('input[name="p_dog"]:checked')?.value,
-                p_atk: document.querySelector('input[name="p_atk"]:checked')?.value,
-                p_ill: document.querySelector('input[name="p_ill"]:checked')?.value,
-                ill_detail: document.getElementById('ill_detail').value.trim() || "無",
-                services: Array.from(document.querySelectorAll('input[name="service"]:checked')).map(el => el.value).join(', ') || "未勾選",
-                price: parseInt(document.getElementById('price').value) || 0,
-                pickup_time: document.getElementById('pickup_time').value || "LINE通知",
-                signature_data: originalSig,
-                created_at: new Date().toISOString()
-            };
+    const data = {
+        owner_name: document.getElementById('owner_name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        id_number: document.getElementById('id_number').value.trim().toUpperCase(),
+        phone: document.getElementById('phone').value.trim(),
+        address: document.getElementById('address').value.trim(),
+        emergency_name: document.getElementById('emergency_name').value.trim(),
+        emergency_tel: document.getElementById('emergency_tel').value.trim(),
+        pet_name: document.getElementById('pet_name').value.trim(),
+        breed: document.getElementById('breed').value.trim() || "未填寫",
+        color: document.getElementById('color').value.trim() || "未填寫",
+        chip_no: document.getElementById('chip_no').value.trim(),
+        clinic: document.getElementById('clinic').value.trim() || "無",
+        sex: document.querySelector('input[name="sex"]:checked')?.value,
+        fix: document.querySelector('input[name="fix"]:checked')?.value,
+        p_human: document.querySelector('input[name="p_human"]:checked')?.value,
+        p_dog: document.querySelector('input[name="p_dog"]:checked')?.value,
+        p_atk: document.querySelector('input[name="p_atk"]:checked')?.value,
+        p_ill: document.querySelector('input[name="p_ill"]:checked')?.value,
+        ill_detail: document.getElementById('ill_detail').value.trim() || "無",
+        services: Array.from(document.querySelectorAll('input[name="service"]:checked')).map(el => el.value).join(', ') || "未勾選",
+        price: priceVal,
+        pickup_time: document.getElementById('pickup_time').value || "LINE通知",
+        signature_data: originalSig,
+        created_at: new Date().toISOString()
+    };
 
-            try {
-                const { error } = await client.from('contracts').insert([data]);
-                if (error) throw error;
+    try {
+        // 第一步：存入 Supabase
+        const { error: supabaseError } = await client.from('contracts').insert([data]);
+        if (supabaseError) throw supabaseError;
 
-                try {
-                    const tempCanvas = document.createElement('canvas');
-                    const tempCtx = tempCanvas.getContext('2d');
-                    tempCanvas.width = canvas.width; tempCanvas.height = canvas.height;
-                    tempCtx.fillStyle = '#FFFFFF'; tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-                    tempCtx.drawImage(canvas, 0, 0);
-                    const mailSig = tempCanvas.toDataURL("image/jpeg", 0.3);
+        // 第二步：寄送 EmailJS
+        // 為了確保圖片能顯示，將簽名背景轉為白色（EmailJS 處理透明 PNG 有時會變黑）
+        const mailCanvas = document.createElement('canvas');
+        const mCtx = mailCanvas.getContext('2d');
+        mailCanvas.width = signatureCanvas.width;
+        mailCanvas.height = signatureCanvas.height;
+        mCtx.fillStyle = "#FFFFFF";
+        mCtx.fillRect(0, 0, mailCanvas.width, mailCanvas.height);
+        mCtx.drawImage(signatureCanvas, 0, 0);
+        const mailSig = mailCanvas.toDataURL("image/jpeg", 0.6); // 使用 jpeg 並壓縮品質
 
-                    await emailjs.send("service_qwect9i", "template_mrp0x8n", { 
-                        ...data, signature_data: mailSig, price: Number(data.price).toLocaleString(), created_at: new Date().toLocaleString() 
-                    });
-                } catch (mailErr) { console.error("Email Error:", mailErr); }
+        await emailjs.send("service_qwect9i", "template_mrp0x8n", { 
+            ...data, 
+            signature_data: mailSig, 
+            price: Number(data.price).toLocaleString(),
+            created_at: new Date().toLocaleString() 
+        });
 
-                alert("✨ 簽署完成，已將副本寄送至您填寫之電子信箱！");
-                location.reload();
-            } catch (err) {
-                alert("儲存失敗: " + err.message);
-                btn.disabled = false;
-                btn.innerText = "確認提交約定單";
-            }
-        }
+        alert("✨ 簽署完成，已將副本寄送至您填寫之電子信箱！");
+        location.reload();
+    } catch (err) {
+        console.error("提交錯誤:", err);
+        alert("儲存或寄送失敗: " + (err.text || err.message));
+        btn.disabled = false;
+        btn.innerText = "確認提交約定單";
+    }
+}
 
         function checkAdmin() {
             if (sessionStorage.getItem('isAdmin') === 'true') { showAdminView(); return; }
