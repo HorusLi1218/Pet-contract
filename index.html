@@ -116,7 +116,7 @@
 
                             <div class="bg-white/5 p-6 rounded-[1.5rem] border border-white/10 space-y-6">
                                 <div class="space-y-3 text-white">
-                                    <span class="text-[10px] font-bold opacity-40 uppercase px-2">晶片號碼 *</span>
+                                    <span class="text-[10px] font-bold opacity-40 uppercase px-2">晶片狀態 *</span>
                                     <div class="input-group">
                                         <input type="text" id="chip_no" class="form-input !text-orange-500 font-bold" placeholder="請輸入10或15碼數字" onblur="validateInput(this, 'chip')">
                                         <div class="error-msg">請輸入正確的10或15碼數字</div>
@@ -363,51 +363,82 @@
 
         function toggleIllDetail(show) { document.getElementById('ill_detail_container').classList.toggle('open', show); }
 
-        async function handleSave() {
-            if(document.querySelectorAll('.input-invalid').length > 0) { alert("⚠️ 格式有誤。"); return; }
-            if(!document.getElementById('contract-form').checkValidity() || !hasSigned) { alert("⚠️ 請填寫完整並簽名。"); return; }
-            
-            const btn = document.getElementById('btn'); btn.disabled = true; btn.innerHTML = '上傳中...';
-            
-            const data = {
-                owner_name: document.getElementById('owner_name').value.trim(),
-                email: document.getElementById('email').value.trim(),
-                id_number: document.getElementById('id_number').value.trim().toUpperCase(),
-                phone: document.getElementById('phone').value.trim(),
-                address: document.getElementById('address').value.trim(),
-                emergency_name: document.getElementById('emergency_name').value.trim(),
-                emergency_tel: document.getElementById('emergency_tel').value.trim(),
-                pet_name: document.getElementById('pet_name').value.trim(),
-                breed: document.getElementById('breed').value.trim() || "未填寫",
-                color: document.getElementById('color').value.trim() || "未填寫",
-                chip_no: document.getElementById('chip_no').value.trim(),
-                clinic: document.getElementById('clinic').value.trim() || "無",
-                sex: document.querySelector('input[name="sex"]:checked')?.value,
-                fix: document.querySelector('input[name="fix"]:checked')?.value,
-                p_human: document.querySelector('input[name="p_human"]:checked')?.value,
-                p_dog: document.querySelector('input[name="p_dog"]:checked')?.value,
-                p_atk: document.querySelector('input[name="p_atk"]:checked')?.value,
-                p_ill: document.querySelector('input[name="p_ill"]:checked')?.value,
-                ill_detail: document.getElementById('ill_detail').value.trim() || "無",
-                services: Array.from(document.querySelectorAll('input[name="service"]:checked')).map(el => el.value).join(', ') || "未勾選",
-                price: parseInt(document.getElementById('price').value) || 0,
-                pickup_time: document.getElementById('pickup_time').value || "LINE通知",
-                signature_data: document.getElementById('sig-preview-img').src,
-                created_at: new Date().toISOString()
-            };
+async function handleSave() {
+    // 1. 基礎檢核
+    if(document.querySelectorAll('.input-invalid').length > 0) { alert("⚠️ 格式有誤。"); return; }
+    if(!document.getElementById('contract-form').checkValidity() || !hasSigned) { alert("⚠️ 請填寫完整並簽名。"); return; }
+    
+    const btn = document.getElementById('btn'); 
+    btn.disabled = true; 
+    btn.innerHTML = '正在提交...';
+    
+    // 取得原始簽名圖片 (高品質 PNG，用於存入資料庫)
+    const originalSig = canvas.toDataURL("image/png");
 
-            try {
-                const { error } = await client.from('contracts').insert([data]);
-                if (error) throw error;
-                await emailjs.send("service_qwect9i", "template_mrp0x8n", { ...data, price: Number(data.price).toLocaleString(), created_at: new Date().toLocaleString() });
-                alert("✨ 簽署完成，已將副本寄送至您填寫之電子信箱！"); location.reload();
-            } catch (err) { 
-                console.error("錯誤細節：", err);
-                alert("儲存失敗: " + (err.message || "請檢查網路連線或資料表欄位設定")); 
-                btn.disabled = false; btn.innerText = "確認提交約定單"; 
-            }
-        }
+    const data = {
+        owner_name: document.getElementById('owner_name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        id_number: document.getElementById('id_number').value.trim().toUpperCase(),
+        phone: document.getElementById('phone').value.trim(),
+        address: document.getElementById('address').value.trim(),
+        emergency_name: document.getElementById('emergency_name').value.trim(),
+        emergency_tel: document.getElementById('emergency_tel').value.trim(),
+        pet_name: document.getElementById('pet_name').value.trim(),
+        breed: document.getElementById('breed').value.trim() || "未填寫",
+        color: document.getElementById('color').value.trim() || "未填寫",
+        chip_no: document.getElementById('chip_no').value.trim(),
+        clinic: document.getElementById('clinic').value.trim() || "無",
+        sex: document.querySelector('input[name="sex"]:checked')?.value,
+        fix: document.querySelector('input[name="fix"]:checked')?.value,
+        p_human: document.querySelector('input[name="p_human"]:checked')?.value,
+        p_dog: document.querySelector('input[name="p_dog"]:checked')?.value,
+        p_atk: document.querySelector('input[name="p_atk"]:checked')?.value,
+        p_ill: document.querySelector('input[name="p_ill"]:checked')?.value,
+        ill_detail: document.getElementById('ill_detail').value.trim() || "無",
+        services: Array.from(document.querySelectorAll('input[name="service"]:checked')).map(el => el.value).join(', ') || "未勾選",
+        price: parseInt(document.getElementById('price').value) || 0,
+        pickup_time: document.getElementById('pickup_time').value || "LINE通知",
+        signature_data: originalSig, // 資料庫存入原始高品質圖
+        created_at: new Date().toISOString()
+    };
 
+try {
+    // 第一步：先存入 Supabase (維持原樣高品質 PNG)
+    const { error } = await client.from('contracts').insert([data]);
+    if (error) throw error;
+
+    // 第二步：單獨處理寄信 (修正黑底並壓縮)
+    try {
+        const tempCanvas = document.createElement('canvas');
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+        tempCtx.fillStyle = '#FFFFFF';
+        tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+        tempCtx.drawImage(canvas, 0, 0);
+        
+        const mailSig = tempCanvas.toDataURL("image/jpeg", 0.3);
+        
+        await emailjs.send("service_qwect9i", "template_mrp0x8n", { 
+            ...data, 
+            signature_data: mailSig, 
+            price: Number(data.price).toLocaleString(), 
+            created_at: new Date().toLocaleString() 
+        });
+        alert("✨ 簽署完成，已將副本寄送至您填寫之電子信箱！");
+    } catch (mailErr) {
+        console.warn("郵件寄送報錯，但合約已存入資料庫：", mailErr);
+        alert("✨ 簽署完成！\n(提示：您的資料已成功存入管理系統。)");
+    }
+    location.reload();
+} catch (err) {
+    // ... 原本的錯誤處理
+        console.error("真正的儲存失敗原因：", err);
+        alert("儲存失敗: " + (err.message || "請檢查網路連線或欄位設定")); 
+        btn.disabled = false; 
+        btn.innerText = "確認提交約定單"; 
+    }
+}
         function checkAdmin() {
             if (sessionStorage.getItem('isAdmin') === 'true') { showAdminView(); return; }
             const userInput = prompt("管理金鑰?");
@@ -448,7 +479,7 @@
             renderAdminList(f);
         }
 
-        function showDetail(idx) {
+function showDetail(idx) {
             const i = allRecords[idx];
             document.getElementById('detailContent').innerHTML = `
                 <div class="space-y-6 text-sm text-slate-800 pb-10">
@@ -460,26 +491,44 @@
                             <p><b>聯絡手機：</b> ${i.phone}</p>
                             <p><b>電子郵件：</b> ${i.email}</p>
                             <p class="sm:col-span-2"><b>通訊地址：</b> ${i.address}</p>
+                            <p><b>緊急聯絡人：</b> ${i.emergency_name}</p>
+                            <p><b>緊急電話：</b> ${i.emergency_tel || '未填寫'}</p>
+                            <p class="sm:col-span-2"><b>指定就醫：</b> ${i.clinic || '無'}</p>
                         </div>
                     </div>
+
                     <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
                         <p class="text-orange-600 font-black border-b border-orange-100 pb-2 mb-4 uppercase text-xs tracking-widest">二、 寵物完整資料</p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-4">
                             <p><b>寵物名字：</b> ${i.pet_name}</p>
                             <p><b>品種花色：</b> ${i.breed} / ${i.color}</p>
-                            <p><b>行為特徵：</b> 親人(${i.p_human}) · 親狗(${i.p_dog}) · 攻擊(${i.p_atk})</p>
-                            <p class="sm:col-span-2"><b>病史情況：</b> ${i.ill_detail}</p>
+                            <p><b>性別：</b> ${i.sex}</p>
+                            <p><b>結紮：</b> ${i.fix}</p>
+                            <p class="sm:col-span-2"><b>晶片號碼：</b> ${i.chip_no}</p>
+                            <p class="sm:col-span-2"><b>性格特徵：</b> 親人(${i.p_human}) · 親狗(${i.p_dog}) · 具攻擊性(${i.p_atk})</p>
+                            <p class="sm:col-span-2"><b>過往病史：</b> ${i.p_ill === '有' ? `<span class="text-red-500 font-bold">${i.ill_detail}</span>` : '無'}</p>
                         </div>
                     </div>
+
+                    <div class="bg-orange-50 p-6 rounded-2xl border border-orange-100">
+                        <p class="text-orange-600 font-black border-b border-orange-200 pb-2 mb-4 uppercase text-xs tracking-widest">三、 本次服務約定</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-4">
+                            <p class="sm:col-span-2"><b>服務項目：</b> <span class="text-orange-700 font-bold">${i.services}</span></p>
+                            <p><b>預計接回：</b> <span class="text-blue-600 font-bold">${i.pickup_time}</span></p>
+                            <p><b>預估金額：</b> <span class="text-orange-600 font-black">NT$ ${Number(i.price).toLocaleString()}</span></p>
+                            <p class="sm:col-span-2 text-[11px] text-slate-400"><b>簽署時間：</b> ${new Date(i.created_at).toLocaleString()}</p>
+                        </div>
+                    </div>
+
                     <div class="text-center p-6 border-2 border-dashed border-slate-200 rounded-2xl bg-white">
-                        <img src="${i.signature_data}" class="max-h-48 mx-auto">
+                        <p class="text-[10px] text-slate-400 mb-2 uppercase tracking-widest">甲方簽署樣本</p>
+                        <img src="${i.signature_data}" class="max-h-48 mx-auto" alt="顧客簽名">
                     </div>
                 </div>`;
             document.getElementById('detailModal').style.display = 'flex';
         }
-
+        
         window.onload = init;
     </script>
 </body>
 </html>
-
