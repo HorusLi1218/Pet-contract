@@ -22,9 +22,8 @@
         .form-input { width: 100%; padding: 1rem 1.2rem; border-radius: 1rem; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); color: #FFF; outline: none; transition: 0.3s; font-size: 16px; }
         .form-input:focus { border-color: var(--brand-orange); box-shadow: 0 0 15px rgba(249, 115, 22, 0.2); }
         
-        /* 修正手機版時間輸入與金額顯示 */
-        #pickup_time { color-scheme: dark; } /* 讓手機版時間選單變深色模式 */
-        
+        input[type="time"] { color-scheme: dark; cursor: pointer; }
+
         .input-valid { border-color: #22c55e !important; }
         .input-invalid { border-color: #ef4444 !important; }
         .error-msg { font-size: 10px; color: #ef4444; height: 14px; margin-top: 4px; padding-left: 8px; opacity: 0; transition: 0.2s; }
@@ -40,27 +39,25 @@
         .sig-wrapper { position: relative; background: #FFF; border-radius: 1.5rem; overflow: hidden; border: 2px dashed rgba(249, 115, 22, 0.2); }
         .signature-hint { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; color: rgba(0,0,0,0.03); font-weight: 900; font-size: 2.5rem; letter-spacing: 0.5rem; }
         
-        #adminView, #detailModal { display: none; }
+        #adminView, #detailModal, .hidden { display: none; }
         .section-header { font-size: 0.8rem; font-weight: 900; letter-spacing: 0.15em; color: var(--brand-orange); border-left: 4px solid var(--brand-orange); padding-left: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
 
         .btn-submit { animation: pulse-orange 2s infinite; }
         @keyframes pulse-orange { 0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); } 70% { box-shadow: 0 0 0 12px rgba(249, 115, 22, 0); } 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); } }
 
-        /* 行動端小螢幕微調 */
         @media (max-width: 480px) {
-            #pickup_time { font-size: 1.5rem; }
-            #price { font-size: 1.5rem; width: 100px; }
             .section-header { font-size: 0.75rem; }
+            .form-input { padding: 0.8rem 1rem; }
         }
     </style>
 </head>
 <body class="antialiased pb-10">
 
     <nav class="fixed top-0 w-full z-50 px-4 py-4">
-        <div class="max-w-5xl mx-auto flex justify-between items-center glass-card px-4 md:px-6 py-3 shadow-2xl border border-white/5">
+        <div class="max-w-5xl mx-auto flex justify-between items-center glass-card px-6 py-3 shadow-2xl border border-white/5">
             <div class="flex items-center gap-2">
                 <i class="fas fa-paw text-orange-500"></i>
-                <span class="text-[12px] md:text-lg font-black serif-title text-white tracking-wider">可樂果寵物生活館</span>
+                <span class="text-sm md:text-lg font-black serif-title text-white tracking-wider">可樂果寵物生活館</span>
             </div>
             <button onclick="checkAdmin()" class="text-[10px] font-bold opacity-30 hover:opacity-100 tracking-widest uppercase text-white">管理登入</button>
         </div>
@@ -69,16 +66,16 @@
     <main id="clientView" class="pt-24 px-4">
         <div class="max-w-xl mx-auto">
             <div class="glass-card shadow-2xl overflow-hidden border border-white/10">
-                <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-6 md:p-8 text-center text-white relative">
-                    <h1 class="text-xl md:text-3xl font-black serif-title tracking-widest relative">約定事項確認單</h1>
+                <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-8 text-center text-white relative">
+                    <h1 class="text-2xl md:text-3xl font-black serif-title tracking-widest relative">約定事項確認單</h1>
                     <p class="text-[9px] font-bold mt-2 tracking-[0.4em] uppercase opacity-70 relative">Digital Grooming Record</p>
                 </div>
 
-                <div class="p-5 md:p-10 space-y-8 md:space-y-10">
+                <div class="p-6 md:p-10 space-y-10">
                     <form id="contract-form" onsubmit="return false;" class="space-y-10">
                         <section>
                             <p class="section-header uppercase">一、 飼主基本資料</p>
-                            <div class="space-y-3">
+                            <div class="space-y-2">
                                 <div class="input-group"><input type="text" id="owner_name" class="form-input" placeholder="飼主姓名 *" required></div>
                                 <div class="input-group">
                                     <input type="email" id="email" class="form-input" placeholder="電子信箱 *" onblur="validateInput(this, 'email')" required>
@@ -97,10 +94,7 @@
                                 <div class="input-group"><input type="text" id="address" class="form-input" placeholder="通訊地址 *" required></div>
                                 <div class="grid grid-cols-2 gap-3">
                                     <div class="input-group"><input type="text" id="emergency_name" class="form-input" placeholder="緊急聯絡人 *" required></div>
-                                    <div class="input-group">
-                                        <input type="tel" id="emergency_tel" class="form-input num-only" placeholder="緊急電話" onblur="validateInput(this, 'phone')">
-                                        <div class="error-msg">格式不符</div>
-                                    </div>
+                                    <div class="input-group"><input type="tel" id="emergency_tel" class="form-input num-only" placeholder="緊急電話" onblur="validateInput(this, 'phone')"><div class="error-msg">格式不符</div></div>
                                 </div>
                                 <input type="text" id="clinic" class="form-input" placeholder="指定就醫診所(若無則由本店送交)">
                             </div>
@@ -114,24 +108,24 @@
                                 <input type="text" id="color" class="form-input" placeholder="花色">
                             </div>
 
-                            <div class="bg-white/5 p-4 md:p-6 rounded-[1.5rem] border border-white/10 space-y-6">
+                            <div class="bg-white/5 p-6 rounded-[1.5rem] border border-white/10 space-y-6">
                                 <div class="space-y-1 text-white">
                                     <span class="text-[10px] font-bold opacity-40 uppercase px-2">晶片號碼 *</span>
                                     <div class="flex flex-col sm:flex-row items-start gap-2">
                                         <div class="input-group flex-1">
-                                            <input type="text" id="chip_no" class="form-input !text-orange-500 font-bold" placeholder="10或15碼數字" onblur="validateInput(this, 'chip')">
+                                            <input type="text" id="chip_no" class="form-input !text-orange-500 font-bold" placeholder="輸入10或15碼數字" onblur="validateInput(this, 'chip')">
                                             <div class="error-msg">需10或15碼數字</div>
                                         </div>
-                                        <label class="pill-group w-full sm:w-auto"><input type="checkbox" id="no_chip" onchange="toggleChip(this)"><span class="pill-item w-full !py-4 md:!py-3 px-4">無晶片</span></label>
+                                        <label class="pill-group w-full sm:w-auto"><input type="checkbox" id="no_chip" onchange="toggleChip(this)"><span class="pill-item w-full !py-4 px-4">無晶片</span></label>
                                     </div>
                                 </div>
-                                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-white/5 pill-group text-white">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-white/5 pill-group text-white gap-4">
                                     <div class="flex items-center gap-3"><span class="text-[10px] font-bold opacity-40">性別</span><label><input type="radio" name="sex" value="公" required><span class="pill-item">公</span></label><label><input type="radio" name="sex" value="母"><span class="pill-item">母</span></label></div>
                                     <div class="flex items-center gap-3"><span class="text-[10px] font-bold opacity-40">結紮</span><label><input type="radio" name="fix" value="是" required><span class="pill-item">是</span></label><label><input type="radio" name="fix" value="否"><span class="pill-item">否</span></label></div>
                                 </div>
                             </div>
 
-                            <div class="mt-6 p-4 md:p-6 bg-white/5 rounded-[2rem] border border-white/5 space-y-4 text-white text-sm">
+                            <div class="mt-6 p-6 bg-white/5 rounded-[2rem] border border-white/5 space-y-4 text-white text-sm">
                                 <div class="flex justify-between items-center pill-group"><span>親人</span><div class="flex gap-2"><label><input type="radio" name="p_human" value="是" required><span class="pill-item !px-5">是</span></label><label><input type="radio" name="p_human" value="否"><span class="pill-item !px-5">否</span></label></div></div>
                                 <div class="flex justify-between items-center pill-group"><span>親狗</span><div class="flex gap-2"><label><input type="radio" name="p_dog" value="是" required><span class="pill-item !px-5">是</span></label><label><input type="radio" name="p_dog" value="否"><span class="pill-item !px-5">否</span></label></div></div>
                                 <div class="flex justify-between items-center pill-group"><span>具攻擊性</span><div class="flex gap-2"><label><input type="radio" name="p_atk" value="是" required><span class="pill-item !px-5">是</span></label><label><input type="radio" name="p_atk" value="否"><span class="pill-item !px-5">否</span></label></div></div>
@@ -150,63 +144,50 @@
                                 <label><input type="checkbox" name="service" value="局部修剪"><span class="pill-item w-full !py-4">局部修剪</span></label>
                                 <label><input type="checkbox" name="service" value="寵物安親"><span class="pill-item w-full !py-4">寵物安親</span></label>
                                 <label><input type="checkbox" name="service" value="包月洗澡"><span class="pill-item w-full !py-4">包月洗澡</span></label>
-                                <label><input type="checkbox" name="service" value="其他" id="other_trig"><span class="pill-item w-full !py-4">其他項目</span></label>
+                                <label><input type="checkbox" name="service" value="其他" id="other_trig"><span class="pill-item w-full !py-4 text-center">其他項目</span></label>
                             </div>
                             <input type="text" id="other_val" class="form-input hidden mb-6" placeholder="註明其他項目...">
 
-                            <div class="p-5 md:p-8 bg-orange-500/10 border border-orange-500/20 rounded-[2rem] flex flex-col gap-6 text-white">
-                                <div class="flex justify-between items-center w-full border-b border-orange-500/10 pb-4">
-                                    <div>
-                                        <span class="text-[10px] font-bold opacity-40 uppercase block mb-1">預計接回時間</span>
-                                        <input type="time" id="pickup_time" class="bg-transparent text-2xl md:text-4xl font-black text-orange-500 outline-none w-full">
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="text-[9px] text-orange-400/70">* 逾時30分鐘起將<br>額外收取安親費</p>
-                                    </div>
+                            <div class="space-y-4">
+                                <div class="p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-2">
+                                    <label class="text-[11px] font-bold text-orange-400 uppercase tracking-widest flex items-center gap-2">
+                                        <i class="fas fa-clock"></i> 預計接回時間 *
+                                    </label>
+                                    <input type="time" id="pickup_time" class="form-input !bg-slate-950/80 !border-orange-500/30 text-2xl font-black text-orange-500 py-4" required>
+                                    <p class="text-[10px] text-orange-400/60 mt-1 italic">* 逾時 30 分鐘起將額外收取安親費用</p>
                                 </div>
-                                <div class="flex justify-between items-end w-full">
-                                    <div>
-                                        <span class="text-[10px] font-bold opacity-40 uppercase block">服務預估金額</span>
-                                        <span class="text-orange-500 text-sm font-bold">NT$</span>
+
+                                <div class="p-5 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-2">
+                                    <label class="text-[11px] font-bold text-orange-400 uppercase tracking-widest flex items-center gap-2">
+                                        <i class="fas fa-coins"></i> 服務預估金額 *
+                                    </label>
+                                    <div class="flex items-center gap-3 bg-slate-950/80 border border-orange-500/30 rounded-xl px-4 py-2 focus-within:border-orange-500 transition-all">
+                                        <span class="text-orange-500 font-bold text-lg">NT$</span>
+                                        <input id="price" type="number" value="0" onclick="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'" class="bg-transparent text-3xl font-black text-orange-500 outline-none w-full text-right num-only" required>
                                     </div>
-                                    <input id="price" type="number" value="0" onclick="if(this.value=='0')this.value=''" onblur="if(this.value=='')this.value='0'" class="bg-transparent text-4xl md:text-5xl font-black text-orange-500 outline-none text-right w-full max-w-[150px] num-only">
                                 </div>
                             </div>
                         </section>
 
                         <section>
                             <p class="section-header uppercase">四、 乙方資訊</p>
-                            <div class="bg-white/5 p-5 rounded-[1.5rem] border border-white/10 text-[12px] md:text-[13px] text-slate-300 space-y-2">
+                            <div class="bg-white/5 p-6 rounded-[1.5rem] border border-white/10 text-[13px] text-slate-300 space-y-2">
                                 <p><b class="text-orange-500">負責人：</b>邱駿侖 | <b>電話：</b>06-358 2451</p>
                                 <p><b class="text-orange-500">地址：</b>台南市中西區湖美街70巷16號</p>
                                 <p><b class="text-orange-500">營業時間：</b>10:00-19:00 (週一店休)</p>
-                                <div class="mt-4 pt-4 border-t border-white/10 opacity-70">
-                                    <p class="text-[10px] font-bold uppercase mb-1">特約緊急送醫場所</p>
-                                    <p>我的動物醫院 (臺南市中西區和緯路五段235號)</p>
-                                </div>
-                            </div>
-                        </section>
-
-                        <section>
-                            <p class="section-header uppercase">五、 簽署聲明與備註</p>
-                            <div class="bg-white/5 p-5 rounded-[1.5rem] border border-white/10 text-[12px] leading-relaxed text-slate-300 space-y-3">
-                                <p>● 本人已詳閱本店官方帳號公告之定型化契約全條文。</p>
-                                <p>● 甲方已誠實告知寵物之健康與行為狀況。若因隱瞞導致意外，乙方不負損害賠償責任。</p>
-                                <p>● 甲方同意於約定時間接回寵物，逾時將按時加收費用。</p>
-                                <p class="text-orange-400 font-bold italic">預計金額為基礎報價，若現場有打結或寄生蟲等狀況，將另行通知加價。</p>
                             </div>
                         </section>
 
                         <section class="space-y-4">
-                            <p class="section-header uppercase">六、 甲方電子簽署</p>
+                            <p class="section-header uppercase">五、 甲方電子簽署</p>
                             <div class="sig-wrapper h-64 shadow-inner relative">
                                 <div class="signature-hint">請在此簽名</div>
                                 <canvas id="sig-canvas" class="w-full h-full relative z-10"></canvas>
                             </div>
-                            <button type="button" onclick="clearSig()" class="text-[11px] opacity-40 font-bold uppercase tracking-widest hover:opacity-100 text-white flex items-center"><i class="fas fa-eraser mr-2"></i> 重新簽署</button>
+                            <button type="button" onclick="clearSig()" class="text-[10px] opacity-30 font-bold uppercase tracking-widest hover:opacity-100 text-white"><i class="fas fa-eraser mr-1"></i> 重新簽署</button>
                         </section>
 
-                        <button type="button" onclick="handleSave()" id="btn" class="btn-submit w-full bg-orange-500 hover:bg-orange-600 text-white py-6 md:py-8 rounded-[2rem] font-black text-lg md:text-xl shadow-xl transition-all active:scale-[0.98]">確認提交約定單</button>
+                        <button type="button" onclick="handleSave()" id="btn" class="btn-submit w-full bg-orange-500 hover:bg-orange-600 text-white py-8 rounded-[2rem] font-black text-xl shadow-xl transition-all active:scale-[0.98]">確認提交約定單</button>
                     </form>
                 </div>
             </div>
@@ -215,23 +196,23 @@
 
     <main id="adminView" class="pt-28 px-4 pb-20">
         <div class="max-w-6xl mx-auto glass-card overflow-hidden shadow-2xl">
-            <div class="p-6 md:p-8 flex flex-col md:flex-row justify-between items-center bg-white/5 border-b border-white/5 text-white gap-4">
-                <h3 class="font-black text-xl md:text-2xl text-orange-500 tracking-tighter">數據管理系統</h3>
+            <div class="p-8 flex flex-col md:flex-row justify-between items-center bg-white/5 border-b border-white/5 text-white gap-4">
+                <h3 class="font-black text-2xl text-orange-500 tracking-tighter">數據管理系統</h3>
                 <div class="flex items-center gap-3 w-full md:w-auto">
                     <input type="text" id="adminSearch" oninput="filterRecords(this.value)" placeholder="搜尋..." class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm outline-none focus:border-orange-500 flex-1 md:w-80 text-white">
-                    <button onclick="location.reload()" class="bg-slate-700 text-white px-5 py-2 rounded-xl text-xs font-bold">登出</button>
+                    <button onclick="logoutAdmin()" class="bg-slate-700 text-white px-5 py-2 rounded-xl text-xs font-bold">登出</button>
                 </div>
             </div>
             <div class="overflow-x-auto text-white">
-                <table class="w-full text-left min-w-[800px]">
+                <table class="w-full text-left min-w-[1000px]">
                     <thead class="bg-white/5 text-[10px] font-bold opacity-40 uppercase">
                         <tr>
-                            <th class="px-6 py-4">寵物 / 飼主</th>
-                            <th class="px-6 py-4">服務項目</th>
-                            <th class="px-6 py-4 text-center">預計接回</th>
-                            <th class="px-6 py-4 text-center">預估金額</th>
-                            <th class="px-6 py-4 text-center">簽名</th>
-                            <th class="px-6 py-4 text-right">操作</th>
+                            <th class="px-8 py-6">寵物 / 飼主</th>
+                            <th class="px-8 py-6">服務項目</th>
+                            <th class="px-8 py-6 text-center">預計接回</th>
+                            <th class="px-8 py-6 text-center">預估金額</th>
+                            <th class="px-8 py-6 text-center">簽名</th>
+                            <th class="px-8 py-6 text-right">操作</th>
                         </tr>
                     </thead>
                     <tbody id="adminList" class="divide-y divide-white/5"></tbody>
@@ -240,7 +221,7 @@
         </div>
     </main>
 
-    <div id="detailModal" class="fixed inset-0 bg-slate-900/95 backdrop-blur-3xl z-[120] flex items-center justify-center p-4" onclick="this.style.display='none'"><div class="bg-white text-slate-900 w-full max-w-3xl rounded-[2.5rem] overflow-hidden shadow-2xl" onclick="event.stopPropagation()"><div class="bg-slate-100 px-6 py-4 md:px-8 md:py-6 flex justify-between items-center border-b"><h2 class="text-xl font-black text-slate-800">服務詳情</h2><button onclick="document.getElementById('detailModal').style.display='none'" class="text-slate-400 text-2xl hover:text-orange-500"><i class="fas fa-times-circle"></i></button></div><div id="detailContent" class="p-5 md:p-8 overflow-y-auto max-h-[75vh]"></div></div></div>
+    <div id="detailModal" class="fixed inset-0 bg-slate-900/95 backdrop-blur-3xl z-[120] flex items-center justify-center p-4" onclick="this.style.display='none'"><div class="bg-white text-slate-900 w-full max-w-3xl rounded-[2.5rem] overflow-hidden shadow-2xl" onclick="event.stopPropagation()"><div class="bg-slate-100 px-8 py-6 flex justify-between items-center border-b"><h2 class="text-xl font-black text-slate-800">服務詳情</h2><button onclick="document.getElementById('detailModal').style.display='none'" class="text-slate-400 text-2xl hover:text-orange-500"><i class="fas fa-times-circle"></i></button></div><div id="detailContent" class="p-8 overflow-y-auto max-h-[75vh]"></div></div></div>
 
     <script>
         const client = supabase.createClient('https://dkavdfardalijxkqcopi.supabase.co', 'sb_publishable_o7xY-xRVujJP6TFEgEbzIg_4UJlUCVX');
@@ -264,6 +245,7 @@
             canvas.addEventListener('touchstart', start, {passive: false}); canvas.addEventListener('touchmove', move, {passive: false}); window.addEventListener('touchend', stop);
             document.querySelectorAll('.num-only').forEach(el => { el.addEventListener('input', function() { this.value = this.value.replace(/[^0-9]/g, ''); }); });
             document.getElementById('other_trig').onchange = (e) => document.getElementById('other_val').classList.toggle('hidden', !e.target.checked);
+            if (sessionStorage.getItem('isAdmin') === 'true') { showAdminView(); }
         }
 
         function resize() {
@@ -331,12 +313,23 @@
         }
 
         function checkAdmin() {
+            if (sessionStorage.getItem('isAdmin') === 'true') { showAdminView(); return; }
             const userInput = prompt("管理金鑰?");
             if (userInput && btoa(userInput.trim()) === "ODg4OA==") {
-                document.getElementById('clientView').style.display='none'; 
-                document.getElementById('adminView').style.display='block'; 
-                loadAdmin();
+                sessionStorage.setItem('isAdmin', 'true');
+                showAdminView();
             } else if (userInput) { alert("金鑰錯誤！"); }
+        }
+
+        function showAdminView() {
+            document.getElementById('clientView').style.display='none'; 
+            document.getElementById('adminView').style.display='block'; 
+            loadAdmin();
+        }
+
+        function logoutAdmin() {
+            sessionStorage.removeItem('isAdmin');
+            location.reload();
         }
 
         async function loadAdmin() {
@@ -349,16 +342,15 @@
             const tbody = document.getElementById('adminList');
             if (!list || list.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="text-center py-10 opacity-30">無資料</td></tr>'; return; }
             tbody.innerHTML = list.map((i, idx) => {
-                const tags = (i.services || "未勾選").split(', ').map(s => `<span class="bg-orange-500/10 text-orange-400 text-[10px] px-2 py-0.5 rounded border border-orange-500/20 mr-1">${s}</span>`).join('');
                 const priceNum = Number(String(i.price).replace(/,/g, '')) || 0;
                 return `
                 <tr class="hover:bg-white/5 transition-colors">
-                    <td class="px-6 py-6 font-bold text-sm">${i.pet_name}<br><span class="text-orange-500 text-[10px] opacity-70">${i.owner_name}</span></td>
-                    <td class="px-6 py-6"><div class="flex flex-wrap gap-1 max-w-[200px]">${tags}</div></td>
-                    <td class="px-6 py-6 text-center text-sm font-bold text-blue-400">${i.pickup_time || "未定"}</td>
-                    <td class="px-6 py-6 text-center font-black text-orange-500 text-sm">NT$ ${priceNum.toLocaleString()}</td>
-                    <td class="px-6 py-6 text-center"><img src="${i.signature_data}" class="h-8 mx-auto bg-white rounded p-1"></td>
-                    <td class="px-6 py-6 text-right"><button onclick="showDetail(${idx})" class="text-orange-500 font-bold border border-orange-500/30 px-4 py-1.5 rounded-full text-[10px]">詳情</button></td>
+                    <td class="px-8 py-8 font-bold">${i.pet_name}<br><span class="text-orange-500 text-[10px] opacity-70">${i.owner_name}</span></td>
+                    <td class="px-8 py-8"><span class="text-xs opacity-60">${i.services}</span></td>
+                    <td class="px-8 py-8 text-center text-sm font-bold text-blue-400">${i.pickup_time}</td>
+                    <td class="px-8 py-8 text-center font-black text-orange-500">NT$ ${priceNum.toLocaleString()}</td>
+                    <td class="px-8 py-8 text-center"><img src="${i.signature_data}" class="h-10 mx-auto bg-white rounded p-1"></td>
+                    <td class="px-8 py-8 text-right"><button onclick="showDetail(${idx})" class="text-orange-500 font-bold border border-orange-500/30 px-5 py-2 rounded-full text-[10px]">詳情</button></td>
                 </tr>`;
             }).join('');
         }
@@ -367,8 +359,7 @@
             const s = val.toLowerCase();
             const f = allRecords.filter(i => 
                 (i.pet_name && i.pet_name.toLowerCase().includes(s)) || 
-                (i.owner_name && i.owner_name.toLowerCase().includes(s)) || 
-                (i.services && i.services.toLowerCase().includes(s))
+                (i.owner_name && i.owner_name.toLowerCase().includes(s))
             ); 
             renderAdminList(f); 
         }
@@ -378,55 +369,26 @@
             document.getElementById('detailContent').innerHTML = `
                 <div class="space-y-6 text-sm text-slate-800">
                     <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                        <p class="text-orange-600 font-black border-b border-orange-100 pb-2 mb-4 uppercase text-xs tracking-widest">一、 飼主完整資料</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-4">
-                            <p><b>飼主姓名：</b> ${i.owner_name}</p>
-                            <p><b>身分證號：</b> ${i.id_number || '未填寫'}</p>
-                            <p><b>聯絡手機：</b> ${i.phone}</p>
-                            <p><b>電子郵件：</b> ${i.email || '未填寫'}</p>
-                            <p><b>緊急聯絡：</b> ${i.emergency_name || '未填'}</p>
-                            <p><b>緊急電話：</b> ${i.emergency_tel || '未填'}</p>
-                            <p class="col-span-1 sm:col-span-2"><b>通訊地址：</b> ${i.address}</p>
-                        </div>
+                        <p class="text-orange-600 font-black border-b border-orange-100 pb-2 mb-4 uppercase text-xs tracking-widest">飼主資料</p>
+                        <p><b>姓名：</b> ${i.owner_name} | <b>電話：</b> ${i.phone}</p>
+                        <p><b>身分證：</b> ${i.id_number} | <b>信箱：</b> ${i.email}</p>
+                        <p><b>地址：</b> ${i.address}</p>
                     </div>
-
                     <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                        <p class="text-orange-600 font-black border-b border-orange-100 pb-2 mb-4 uppercase text-xs tracking-widest">二、 寵物完整資料</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-4">
-                            <p><b>寵物名字：</b> ${i.pet_name}</p>
-                            <p><b>品種花色：</b> ${i.breed} / ${i.color}</p>
-                            <p><b>晶片號碼：</b> ${i.chip_no || '無'}</p>
-                            <p><b>性別結紮：</b> ${i.sex} / ${i.fix}</p>
-                            <p class="col-span-1 sm:col-span-2"><b>行為特徵：</b> 親人(${i.p_human}) · 親狗(${i.p_dog}) · 攻擊性(${i.p_atk})</p>
-                            <p class="col-span-1 sm:col-span-2"><b>指定就醫：</b> ${i.clinic || '無'}</p>
-                            <div class="col-span-1 sm:col-span-2 bg-orange-50 p-4 rounded-xl border border-orange-100">
-                                <b>過往病史 (${i.p_ill})：</b><br>
-                                <span class="text-slate-600">${i.ill_detail}</span>
-                            </div>
-                        </div>
+                        <p class="text-orange-600 font-black border-b border-orange-100 pb-2 mb-4 uppercase text-xs tracking-widest">寵物資料</p>
+                        <p><b>寵物：</b> ${i.pet_name} (${i.breed}/${i.color})</p>
+                        <p><b>晶片：</b> ${i.chip_no} | <b>性別：</b> ${i.sex} (${i.fix})</p>
+                        <p><b>特徵：</b> 親人(${i.p_human}) 親狗(${i.p_dog}) 攻擊性(${i.p_atk})</p>
+                        <p><b>病史：</b> ${i.ill_detail}</p>
                     </div>
-
-                    <div class="bg-orange-600 text-white p-5 md:p-6 rounded-2xl shadow-xl">
-                        <p class="font-black border-b border-white/20 pb-2 mb-4 uppercase text-xs tracking-widest">三、 本次服務約定</p>
-                        <div class="space-y-4">
-                            <p class="text-md md:text-lg"><b>約定項目：</b> ${i.services}</p>
-                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
-                                <div>
-                                    <p class="opacity-80 text-xs">預計接回時間</p>
-                                    <p class="text-xl md:text-2xl font-black">${i.pickup_time}</p>
-                                </div>
-                                <div class="text-left sm:text-right w-full sm:w-auto">
-                                    <p class="opacity-80 text-xs">預估金額</p>
-                                    <p class="text-2xl md:text-3xl font-black font-mono">NT$ ${Number(String(i.price).replace(/,/g, '')).toLocaleString()}</p>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="bg-orange-600 text-white p-6 rounded-2xl">
+                        <p class="font-bold border-b border-white/20 mb-3 pb-1">約定事項</p>
+                        <p><b>項目：</b> ${i.services}</p>
+                        <p><b>接回：</b> ${i.pickup_time} | <b>金額：</b> NT$ ${Number(i.price).toLocaleString()}</p>
                     </div>
-
-                    <div class="text-center p-6 border-2 border-dashed border-slate-200 rounded-2xl bg-white">
-                        <p class="text-[10px] font-black text-slate-300 uppercase mb-4 tracking-widest">甲方電子簽署憑證</p>
-                        <img src="${i.signature_data}" class="max-h-48 mx-auto filter drop-shadow-sm">
-                        <p class="text-[10px] text-slate-400 mt-4">簽署日期：${new Date(i.created_at).toLocaleString('zh-TW')}</p>
+                    <div class="text-center p-4 border border-dashed rounded-xl">
+                        <img src="${i.signature_data}" class="max-h-40 mx-auto">
+                        <p class="text-[10px] mt-2 opacity-50">簽署時間：${new Date(i.created_at).toLocaleString()}</p>
                     </div>
                 </div>`;
             document.getElementById('detailModal').style.display = 'flex';
