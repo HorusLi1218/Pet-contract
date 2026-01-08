@@ -1,0 +1,24 @@
+name: Auto Replace API Key and Deploy
+
+on:
+  push:
+    branches:
+      - main  # 確保這與您的分支名稱一致（您的截圖顯示是 main）
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Replace Key in HTML
+        run: |
+          # 這會把 index.html 裡的 __BREVO_KEY__ 換成您在 Secrets 設定的 API Key
+          sed -i 's/__BREVO_KEY__/${{ secrets.BREVO_API_KEY }}/g' index.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
