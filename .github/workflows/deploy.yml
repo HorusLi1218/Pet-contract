@@ -8,12 +8,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # 確保有權限寫入 gh-pages 分支
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
       - name: Replace Key
-        # 注意：run 必須跟 name 對齊，且指令前後建議檢查是否有正確替換
+        # 使用單引號包裹指令，並確保 run 正確縮排
         run: sed -i 's/__BREVO_KEY__/${{ secrets.BREVO_API_KEY }}/g' index.html
 
       - name: Deploy
