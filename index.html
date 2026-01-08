@@ -617,59 +617,112 @@ async function handleSave() {
         const { error: supabaseError } = await client.from('contracts').insert([data]);
         if (supabaseError) throw supabaseError;
 
-// --- 6. 準備郵件範本 ---
+// --- 6. 準備 Brevo 格式的郵件副本 ---
         const emailHtml = `
 <!DOCTYPE html>
 <html lang="zh-TW">
-<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: sans-serif;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>可樂果寵物生活館 | 寵物美容契約副本</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f8fafc; -webkit-text-size-adjust: 100%; font-family: 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;">
     <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f8fafc; padding: 20px 0;">
         <tr>
             <td align="center">
                 <div style="color: #334155; max-width: 600px; width: 95%; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 20px; overflow: hidden; background-color: #ffffff; line-height: 1.6; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
-                    <div style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); padding: 35px 30px; text-align: center; color: #ffffff;">
+                    
+                    <div style="background: #f97316; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); padding: 35px 30px; text-align: center; color: #ffffff;">
                         <h1 style="margin: 0; font-size: 26px; font-weight: 900; letter-spacing: 3px;">可樂果寵物生活館</h1>
-                        <p style="margin: 8px 0 0 0; font-size: 11px; opacity: 0.8; text-transform: uppercase;">寵物美容定型化契約 (副本)</p>
+                        <p style="margin: 8px 0 0 0; font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 2px;">寵物美容定型化契約 (副本)</p>
                         <div style="margin-top: 15px; display: inline-block; background: rgba(0,0,0,0.1); padding: 5px 15px; border-radius: 99px; font-size: 11px;">存檔時間：${createdAtTime}</div>
                     </div>
+
                     <div style="padding: 30px;">
                         <p style="font-size: 15px; margin-top: 0;">親愛的 <strong>${data.owner_name}</strong> 您好：</p>
                         <p style="font-size: 14px; color: #64748b;">以下是您在網頁填寫的契約詳細資料與約定條款：</p>
-                        
+
                         <div style="margin-top: 25px;">
-                            <div style="font-size: 13px; font-weight: bold; color: #f97316; border-left: 4px solid #f97316; padding-left: 10px; margin-bottom: 12px;">一、 服務約定摘要</div>
-                            <table width="100%" border="0" style="font-size: 13px; border-collapse: collapse;">
-                                <tr><td width="90" style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">寵物名字</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.pet_name}</td></tr>
-                                <tr><td style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">服務項目</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.services}</td></tr>
-                                <tr><td style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">預計接回</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.pickup_time}</td></tr>
-                                <tr><td style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">本次金額</td><td style="padding: 8px 0; color: #f97316; font-weight:bold; border-bottom: 1px solid #f8fafc;">NT$ ${Number(data.price).toLocaleString()}</td></tr>
+                            <div style="font-size: 13px; font-weight: bold; color: #f97316; border-left: 4px solid #f97316; padding-left: 10px; margin-bottom: 12px;">一、 飼主基本資料</div>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size: 13px; border-collapse: collapse;">
+                                <tr><td width="90" style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">飼主姓名</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.owner_name}</td></tr>
+                                <tr><td style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">身分證號</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.id_number}</td></tr>
+                                <tr><td style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">聯絡手機</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.phone}</td></tr>
+                                <tr><td style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">通訊地址</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.address}</td></tr>
+                                <tr><td style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">緊急聯絡</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.emergency_name} / ${data.emergency_tel}</td></tr>
+                                <tr><td style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">指定就醫</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.clinic}</td></tr>
                             </table>
                         </div>
 
+                        <div style="margin-top: 30px;">
+                            <div style="font-size: 13px; font-weight: bold; color: #f97316; border-left: 4px solid #f97316; padding-left: 10px; margin-bottom: 12px;">二、 寵物詳細資料</div>
+                            <div style="background-color: #f8fafc; padding: 18px; border-radius: 12px; border: 1px solid #f1f5f9;">
+                                <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size: 13px;">
+                                    <tr><td width="50%" style="padding-bottom: 8px;"><strong>名字：</strong>${data.pet_name}</td><td width="50%" style="padding-bottom: 8px;"><strong>品種：</strong>${data.breed} / ${data.color}</td></tr>
+                                    <tr><td style="padding-bottom: 8px;"><strong>晶片號碼：</strong>${data.chip_no}</td><td style="padding-bottom: 8px;"><strong>性別/結紮：</strong>${data.sex} / ${data.fix}</td></tr>
+                                </table>
+                                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e2e8f0; font-size: 12px; line-height: 1.6;">
+                                    <strong>行為特徵：</strong> 親人(${data.p_human}) &middot; 親狗(${data.p_dog}) &middot; 具攻擊性(${data.p_atk})<br>
+                                    <strong>過往病史：</strong> <span style="color: #ef4444;">${data.p_ill}</span> (${data.ill_detail})
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 30px;">
+                            <div style="font-size: 13px; font-weight: bold; color: #f97316; border-left: 4px solid #f97316; padding-left: 10px; margin-bottom: 12px;">三、 本次服務內容</div>
+                            <div style="background-color: #fff7ed; padding: 20px; border-radius: 12px; border: 1px solid #ffedd5; text-align: center;">
+                                <p style="margin: 0; color: #9a3412; font-size: 11px; font-weight: bold;">服務項目：<span style="font-size: 16px; color: #c2410c; margin-left: 5px;">${data.services}</span></p>
+                                <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top: 15px;">
+                                    <tr>
+                                        <td width="50%" style="border-right: 1px solid #fed7aa;">
+                                            <p style="margin: 0; font-size: 11px; color: #9a3412;">預計接回</p>
+                                            <p style="margin: 2px 0 0 0; font-size: 20px; color: #f97316; font-weight: 900;">${data.pickup_time}</p>
+                                        </td>
+                                        <td width="50%">
+                                            <p style="margin: 0; font-size: 11px; color: #9a3412;">服務金額</p>
+                                            <p style="margin: 2px 0 0 0; font-size: 20px; color: #f97316; font-weight: 900;">NT$ ${Number(data.price).toLocaleString()}</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
                         <div style="margin-top: 30px; padding: 20px; background-color: #f1f5f9; border-radius: 12px; border: 1px solid #e2e8f0;">
-                            <div style="font-size: 13px; font-weight: bold; color: #475569; margin-bottom: 12px;">重要法律約定</div>
-                            <div style="font-size: 11px; color: #64748b; line-height: 1.6;">
-                                ● <strong>健康告知：</strong>若隱瞞寵物病史或攻擊性導致意外，乙方不負損害賠償責任。<br>
-                                ● <strong>退費規定：</strong>包月終止按「已使用次數 × 單次原價」扣除後退還。<br>
-                                ● <strong>逾時費用：</strong>約定時間逾 30 分鐘以上，按公告加收安親費。
+                            <div style="font-size: 13px; font-weight: bold; color: #475569; margin-bottom: 12px;">四、 簽署聲明與法律約定</div>
+                            <div style="font-size: 12px; color: #64748b; line-height: 1.8;">
+                                <div style="margin-bottom: 8px;"><strong>第一條 (契約目的)：</strong> 本服務為犬貓美容，不涉及醫療行為。乙方環境維持安全、通風、清潔。</div>
+                                <div style="margin-bottom: 8px;"><strong>第五條 (健康告知)：</strong> 甲方應誠實告知寵物病史與攻擊性。若因隱瞞導致意外，乙方不負損害賠償責任。</div>
+                                <div style="margin-bottom: 8px;"><strong>第九條 (退費規定)：</strong> 包月服務終止時，預收總額扣除「已使用次數 × 單次原價」後退還餘額。</div>
+                                <div style="margin-bottom: 8px;"><strong>第十二條 (逾時接回)：</strong> 於約定時間逾時 30 分鐘以上，依照價目表公告之 <span style="color: #ea580c; font-weight: bold;">安親費</span> 額外收費。</div>
+                                <div style="margin-top: 10px; border-top: 1px dashed #cbd5e1; padding-top: 10px; color: #475569;">
+                                    ● 經甲乙雙方合意約定，由甲方即時閱覽理解本契約內容並簽署。<br>
+                                    ● 本人已確認預計接回時間與服務金額無誤，並同意上述條款。
+                                </div>
                             </div>
                         </div>
 
                         <div style="margin-top: 40px; border-top: 2px solid #f8fafc; padding-top: 25px;">
-                            <table width="100%" border="0" style="font-size: 13px;">
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size: 13px;">
                                 <tr>
                                     <td width="55%" valign="top">
-                                        <p style="margin: 0 0 8px 0; color: #94a3b8; font-size: 11px; font-weight: bold;">甲方（飼主）簽名樣本</p>
+                                        <p style="margin: 0 0 8px 0; color: #94a3b8; font-size: 11px; font-weight: bold;">甲方（飼主）簽名處</p>
                                         <div style="background-color: #ffffff; border: 1px dashed #e2e8f0; border-radius: 8px; padding: 5px; display: inline-block;">
-                                            <img src="${publicUrl}" width="160" style="display: block; border: 0;" alt="簽名">
+                                            <img src="${publicUrl}" width="160" style="display: block; border: 0;" alt="甲方簽署">
                                         </div>
+                                        <p style="margin: 8px 0 0 0; font-size: 12px; color: #334155; font-weight: bold;">簽署日期時間：<br><span style="color: #ea580c; font-size: 11px;">${createdAtTime}</span></p>
                                     </td>
                                     <td width="45%" style="padding-left: 20px;" valign="top">
-                                        <p style="margin: 0 0 8px 0; color: #94a3b8; font-size: 11px; font-weight: bold;">乙方：可樂果寵物生活館</p>
+                                        <p style="margin: 0 0 8px 0; color: #94a3b8; font-size: 11px; font-weight: bold;">乙方（可樂果寵物生活館）</p>
                                         <p style="margin: 0; font-weight: bold; color: #334155;">負責人：邱駿侖</p>
                                         <p style="margin: 2px 0; font-size: 11px; color: #64748b;">電話：06-358 2451</p>
+                                        <p style="margin: 0; font-size: 11px; color: #64748b; line-height: 1.4;">地址：台南市中西區湖美街70巷16號</p>
                                     </td>
                                 </tr>
                             </table>
+                        </div>
+                        
+                        <div style="margin-top: 30px; font-size: 11px; color: #94a3b8; text-align: center;">
+                            特約醫院：我的動物醫院 (臺南市中西區和緯路五段235號)
                         </div>
                     </div>
                 </div>
