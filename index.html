@@ -586,7 +586,7 @@ async function handleSave() {
 
         // --- 4. 準備合約數據 ---
         const createdAtTime = new Date().toLocaleString('zh-TW');
-        const contractData = {
+        const data = {
             owner_name: document.getElementById('owner_name').value.trim(),
             email: document.getElementById('email').value.trim(),
             id_number: document.getElementById('id_number').value.trim().toUpperCase(),
@@ -614,10 +614,10 @@ async function handleSave() {
         };
 
         // --- 5. 存入 Supabase Database ---
-        const { error: supabaseError } = await client.from('contracts').insert([contractData]);
+        const { error: supabaseError } = await client.from('contracts').insert([data]);
         if (supabaseError) throw supabaseError;
 
-        // --- 6. 呼叫 Vercel API 發送副本郵件 ---
+// --- 6. 準備郵件範本 ---
         const emailHtml = `
 <!DOCTYPE html>
 <html lang="zh-TW">
@@ -634,52 +634,37 @@ async function handleSave() {
                     <div style="padding: 30px;">
                         <p style="font-size: 15px; margin-top: 0;">親愛的 <strong>${data.owner_name}</strong> 您好：</p>
                         <p style="font-size: 14px; color: #64748b;">以下是您在網頁填寫的契約詳細資料與約定條款：</p>
+                        
                         <div style="margin-top: 25px;">
-                            <div style="font-size: 13px; font-weight: bold; color: #f97316; border-left: 4px solid #f97316; padding-left: 10px; margin-bottom: 12px;">一、 飼主基本資料</div>
+                            <div style="font-size: 13px; font-weight: bold; color: #f97316; border-left: 4px solid #f97316; padding-left: 10px; margin-bottom: 12px;">一、 服務約定摘要</div>
                             <table width="100%" border="0" style="font-size: 13px; border-collapse: collapse;">
-                                <tr><td width="90" style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">飼主姓名</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.owner_name}</td></tr>
-                                <tr><td style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">身分證號</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.id_number}</td></tr>
-                                <tr><td style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">聯絡手機</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.phone}</td></tr>
-                                <tr><td style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">通訊地址</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.address}</td></tr>
-                                <tr><td style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">緊急聯絡</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.emergency_name} / ${data.emergency_tel}</td></tr>
-                                <tr><td style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">指定就醫</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.clinic}</td></tr>
+                                <tr><td width="90" style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">寵物名字</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.pet_name}</td></tr>
+                                <tr><td style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">服務項目</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.services}</td></tr>
+                                <tr><td style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">預計接回</td><td style="padding: 8px 0; color: #334155; border-bottom: 1px solid #f8fafc;">${data.pickup_time}</td></tr>
+                                <tr><td style="padding: 8px 0; color: #94a3b8; border-bottom: 1px solid #f8fafc;">本次金額</td><td style="padding: 8px 0; color: #f97316; font-weight:bold; border-bottom: 1px solid #f8fafc;">NT$ ${Number(data.price).toLocaleString()}</td></tr>
                             </table>
                         </div>
-                        <div style="margin-top: 30px;">
-                            <div style="font-size: 13px; font-weight: bold; color: #f97316; border-left: 4px solid #f97316; padding-left: 10px; margin-bottom: 12px;">二、 寵物詳細資料</div>
-                            <div style="background-color: #f8fafc; padding: 18px; border-radius: 12px; border: 1px solid #f1f5f9;">
-                                <table width="100%" border="0" style="font-size: 13px;">
-                                    <tr><td width="50%" style="padding-bottom: 8px;"><strong>名字：</strong>${data.pet_name}</td><td width="50%" style="padding-bottom: 8px;"><strong>品種：</strong>${data.breed} / ${data.color}</td></tr>
-                                    <tr><td style="padding-bottom: 8px;"><strong>晶片號碼：</strong>${data.chip_no}</td><td style="padding-bottom: 8px;"><strong>性別/結紮：</strong>${data.sex} / ${data.fix}</td></tr>
-                                </table>
-                            </div>
-                        </div>
+
                         <div style="margin-top: 30px; padding: 20px; background-color: #f1f5f9; border-radius: 12px; border: 1px solid #e2e8f0;">
-                            <div style="font-size: 13px; font-weight: bold; color: #475569; margin-bottom: 12px;">四、 簽署聲明與法律約定</div>
-                            <div style="font-size: 12px; color: #64748b; line-height: 1.8;">
-                                <div style="margin-bottom: 8px;"><strong>第一條 (契約目的)：</strong> 本服務為犬貓美容，不涉及醫療行為。乙方環境維持安全、通風、清潔。</div>
-                                <div style="margin-bottom: 8px;"><strong>第五條 (健康告知)：</strong> 甲方應誠實告知寵物病史與攻擊性。若因隱瞞導致意外，乙方不負損害賠償責任。</div>
-                                <div style="margin-bottom: 8px;"><strong>第九條 (退費規定)：</strong> 包月服務終止時，預收總額扣除「已使用次數 × 單次原價」後退還餘額，乙方不額外收取解約手續費。</div>
-                                <div style="margin-bottom: 8px;"><strong>第十二條 (逾時接回)：</strong> 於約定時間逾時 30 分鐘以上，依照價目表公告之安親費額外收費。</div>
-                                <div style="margin-bottom: 8px;"><strong>第十五條 (履約保障)：</strong> 預收費用累計金額新台幣一萬元以下，依法免提供履約保障。</div>
-                                <div style="margin-top: 10px; border-top: 1px dashed #cbd5e1; padding-top: 10px; color: #475569;">
-                                    ● 經甲乙雙方合意約定，由甲方即時閱覽理解本契約內容並簽署。<br>
-                                    ● 本人已確認預計接回時間與服務金額無誤，並同意上述條款。<br>
-                                    <span style="font-style: italic; font-size: 11px;">※ 其餘細節依行政院農委會定型化契約範本辦理。</span>
-                                </div>
+                            <div style="font-size: 13px; font-weight: bold; color: #475569; margin-bottom: 12px;">重要法律約定</div>
+                            <div style="font-size: 11px; color: #64748b; line-height: 1.6;">
+                                ● <strong>健康告知：</strong>若隱瞞寵物病史或攻擊性導致意外，乙方不負損害賠償責任。<br>
+                                ● <strong>退費規定：</strong>包月終止按「已使用次數 × 單次原價」扣除後退還。<br>
+                                ● <strong>逾時費用：</strong>約定時間逾 30 分鐘以上，按公告加收安親費。
                             </div>
                         </div>
+
                         <div style="margin-top: 40px; border-top: 2px solid #f8fafc; padding-top: 25px;">
                             <table width="100%" border="0" style="font-size: 13px;">
                                 <tr>
                                     <td width="55%" valign="top">
-                                        <p style="margin: 0 0 8px 0; color: #94a3b8; font-size: 11px; font-weight: bold;">甲方（飼主）簽名處</p>
+                                        <p style="margin: 0 0 8px 0; color: #94a3b8; font-size: 11px; font-weight: bold;">甲方（飼主）簽名樣本</p>
                                         <div style="background-color: #ffffff; border: 1px dashed #e2e8f0; border-radius: 8px; padding: 5px; display: inline-block;">
-                                            <img src="${publicUrl}" width="160" style="display: block; border: 0;" alt="甲方簽署">
+                                            <img src="${publicUrl}" width="160" style="display: block; border: 0;" alt="簽名">
                                         </div>
                                     </td>
                                     <td width="45%" style="padding-left: 20px;" valign="top">
-                                        <p style="margin: 0 0 8px 0; color: #94a3b8; font-size: 11px; font-weight: bold;">乙方（可樂果寵物生活館）</p>
+                                        <p style="margin: 0 0 8px 0; color: #94a3b8; font-size: 11px; font-weight: bold;">乙方：可樂果寵物生活館</p>
                                         <p style="margin: 0; font-weight: bold; color: #334155;">負責人：邱駿侖</p>
                                         <p style="margin: 2px 0; font-size: 11px; color: #64748b;">電話：06-358 2451</p>
                                     </td>
@@ -692,27 +677,28 @@ async function handleSave() {
         </tr>
     </table>
 </body>
-</html>`
+</html>`;
 
+        // --- 7. 發送 API 請求 ---
         const mailResponse = await fetch('/api/send-email', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                email: contractData.email,
-                owner_name: contractData.owner_name,
-                pet_name: contractData.pet_name,
+                email: data.email,
+                owner_name: data.owner_name,
+                pet_name: data.pet_name,
                 htmlContent: emailHtml
             })
         });
 
-        if (!mailResponse.ok) throw new Error('資料已儲存，但郵件副本寄送失敗');
+        if (!mailResponse.ok) throw new Error('副本發送失敗');
 
         alert("✨ 簽署完成，已將副本寄送至您的信箱！");
         location.reload();
 
-    } catch (err) {
+    } catch (err) { // ✅ 補齊錯誤捕捉，網頁才不會卡死
         console.error("提交錯誤:", err);
-        alert("操作失敗: " + (err.message || "未知錯誤"));
+        alert("失敗: " + err.message);
         btn.disabled = false;
         btn.innerHTML = "確認提交約定單";
     }
@@ -843,4 +829,3 @@ function showDetail(idx) {
     </script>
 </body>
 </html>
-
