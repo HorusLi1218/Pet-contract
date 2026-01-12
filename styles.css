@@ -1,0 +1,725 @@
+/* ==========================================================================
+   可樂果寵物生活館 - 定型化契約簽署系統
+   樣式表 v2.0
+   ========================================================================== */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+
+/* ==========================================================================
+   CSS 變數系統 - 深色/淺色模式
+   ========================================================================== */
+
+:root {
+    --brand-orange: #f97316;
+    --brand-orange-light: #fb923c;
+    --brand-orange-dark: #ea580c;
+    
+    /* 深色模式 (預設) */
+    --bg-primary: #0F172A;
+    --bg-secondary: rgba(30, 41, 59, 0.9);
+    --bg-nav: rgba(30, 41, 59, 0.9);
+    --text-primary: #F1F5F9;
+    --text-secondary: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --input-bg: rgba(15, 23, 42, 0.6);
+    --input-border: rgba(255, 255, 255, 0.1);
+    --card-bg: rgba(30, 41, 59, 0.9);
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    
+    /* 動畫時長 */
+    --transition-fast: 0.2s;
+    --transition-normal: 0.3s;
+    --transition-slow: 0.5s;
+}
+
+/* 淺色模式變數 */
+[data-theme="light"] {
+    --bg-primary: #F8FAFC;
+    --bg-secondary: #FFFFFF;
+    --bg-nav: rgba(255, 255, 255, 0.95);
+    --text-primary: #1E293B;
+    --text-secondary: #475569;
+    --border-color: #E2E8F0;
+    --input-bg: #FFFFFF;
+    --input-border: #E2E8F0;
+    --card-bg: #FFFFFF;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+}
+
+/* ==========================================================================
+   基礎樣式
+   ========================================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overscroll-behavior-y: none;
+    transition: background-color var(--transition-normal) ease, 
+                color var(--transition-normal) ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.serif-title {
+    font-family: 'Noto Serif TC', serif;
+}
+
+/* ==========================================================================
+   玻璃拟态卡片效果
+   ========================================================================== */
+
+.glass-card {
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 2rem;
+    box-shadow: 0 8px 32px var(--shadow-color);
+    transition: all var(--transition-normal) ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px var(--shadow-color);
+}
+
+/* ==========================================================================
+   表單元素樣式
+   ========================================================================== */
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    position: relative;
+}
+
+.form-input {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    border-radius: 1rem;
+    background: var(--input-bg);
+    border: 1.5px solid var(--input-border);
+    color: var(--text-primary);
+    outline: none;
+    transition: all var(--transition-normal) ease;
+    font-size: 16px;
+    font-family: inherit;
+}
+
+.form-input:focus {
+    border-color: var(--brand-orange);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1),
+                0 0 15px rgba(249, 115, 22, 0.2);
+    transform: translateY(-1px);
+}
+
+.form-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.6;
+}
+
+/* 時間輸入框 */
+input[type="time"] {
+    color-scheme: dark;
+    cursor: pointer;
+}
+
+[data-theme="light"] input[type="time"] {
+    color-scheme: light;
+}
+
+/* ==========================================================================
+   表單驗證狀態
+   ========================================================================== */
+
+.input-valid {
+    border-color: #22c55e !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2322c55e'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.2rem;
+    padding-right: 3rem !important;
+    animation: success-pulse var(--transition-normal) ease;
+}
+
+.input-invalid {
+    border-color: #ef4444 !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ef4444'%3E%3Cpath d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.2rem;
+    padding-right: 3rem !important;
+    animation: shake var(--transition-normal) ease;
+}
+
+.error-msg {
+    font-size: 10px;
+    color: #ef4444;
+    height: 14px;
+    margin-top: 4px;
+    padding-left: 8px;
+    opacity: 0;
+    transition: opacity var(--transition-fast) ease;
+}
+
+.input-invalid + .error-msg {
+    opacity: 1;
+}
+
+.success-msg {
+    font-size: 11px;
+    color: #22c55e;
+    height: 18px;
+    margin-top: 4px;
+    padding-left: 8px;
+    opacity: 0;
+    transition: opacity var(--transition-fast) ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.input-valid ~ .success-msg {
+    opacity: 1;
+}
+
+/* ==========================================================================
+   Pill 按鈕樣式
+   ========================================================================== */
+
+.pill-group input {
+    display: none;
+}
+
+.pill-item {
+    cursor: pointer;
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    transition: all var(--transition-normal) ease;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+
+.pill-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(249, 115, 22, 0.3);
+    transform: translateY(-1px);
+}
+
+.pill-group input:checked + .pill-item {
+    background: rgba(249, 115, 22, 0.2);
+    border-color: var(--brand-orange);
+    color: var(--brand-orange);
+    font-weight: bold;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+}
+
+/* ==========================================================================
+   區段標題
+   ========================================================================== */
+
+.section-header {
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    color: var(--brand-orange);
+    border-left: 4px solid var(--brand-orange);
+    padding-left: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideInLeft var(--transition-normal) ease;
+}
+
+/* ==========================================================================
+   簽名區域
+   ========================================================================== */
+
+.sig-wrapper {
+    position: relative;
+    background: #FFFFFF !important;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    border: 3px dashed var(--brand-orange) !important;
+    cursor: pointer;
+    transition: all var(--transition-normal) ease;
+}
+
+.sig-wrapper:hover {
+    border-color: var(--brand-orange-dark) !important;
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+    transform: scale(1.01);
+}
+
+.signature-hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    color: var(--brand-orange) !important;
+    font-weight: 900;
+    font-size: 2rem;
+    letter-spacing: 0.2rem;
+    flex-direction: column;
+    gap: 8px;
+    opacity: 0.3;
+}
+
+#sig-preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: none;
+    position: relative;
+    z-index: 10;
+}
+
+/* 全螢幕簽名模式 */
+#sig-fullscreen-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    z-index: 9999;
+    flex-direction: column;
+}
+
+[data-theme="light"] #sig-fullscreen-modal {
+    background: #F8FAFC;
+}
+
+.fs-canvas-container {
+    flex: 1;
+    position: relative;
+    background: #f8fafc;
+    overflow: hidden;
+}
+
+#fs-canvas {
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    cursor: crosshair;
+}
+
+.fs-hint {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #e2e8f0;
+    font-size: 2rem;
+    font-weight: 900;
+    pointer-events: none;
+    text-align: center;
+    opacity: 0.5;
+    line-height: 1.5;
+}
+
+/* ==========================================================================
+   病史詳情容器
+   ========================================================================== */
+
+#ill_detail_container {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--transition-slow) ease,
+                opacity var(--transition-slow) ease;
+    opacity: 0;
+}
+
+#ill_detail_container.open {
+    max-height: 200px;
+    margin-top: 1rem;
+    opacity: 1;
+}
+
+/* ==========================================================================
+   主題切換按鈕
+   ========================================================================== */
+
+#theme-toggle {
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition-normal) ease;
+}
+
+#theme-toggle::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(249,115,22,0.3) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity var(--transition-normal) ease;
+}
+
+#theme-toggle:hover::before {
+    opacity: 1;
+}
+
+#theme-toggle:hover {
+    transform: scale(1.05);
+}
+
+#theme-icon {
+    transition: transform var(--transition-normal) ease;
+}
+
+#theme-toggle:active #theme-icon {
+    transform: rotate(20deg) scale(0.9);
+}
+
+/* ==========================================================================
+   提交按鈕動畫
+   ========================================================================== */
+
+.btn-submit {
+    animation: pulse-orange 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    transition: all var(--transition-normal) ease;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(249, 115, 22, 0.4);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+}
+
+/* ==========================================================================
+   動畫定義
+   ========================================================================== */
+
+@keyframes pulse-slow {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(0.98);
+    }
+}
+
+@keyframes pulse-orange {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 12px rgba(249, 115, 22, 0);
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+@keyframes success-pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 2s infinite;
+}
+
+/* ==========================================================================
+   淺色模式特殊調整
+   ========================================================================== */
+
+[data-theme="light"] .sig-wrapper {
+    background: #F8FAFC !important;
+    border: 3px dashed var(--brand-orange) !important;
+}
+
+[data-theme="light"] .signature-hint {
+    color: #cbd5e1 !important;
+}
+
+[data-theme="light"] nav .glass-card {
+    background: var(--bg-nav);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] nav .glass-card span {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] nav .glass-card button {
+    color: var(--text-secondary) !important;
+}
+
+/* 淺色模式表單元素 */
+[data-theme="light"] .form-input {
+    background-color: #FFFFFF !important;
+    border: 1.5px solid #E2E8F0 !important;
+    color: #1E293B !important;
+}
+
+[data-theme="light"] .form-input:focus {
+    border-color: var(--brand-orange) !important;
+    background-color: #FFFBF5 !important;
+}
+
+[data-theme="light"] .form-input::placeholder {
+    color: #94A3B8 !important;
+}
+
+/* 淺色模式 Pill 按鈕 */
+[data-theme="light"] .pill-item {
+    background-color: #F8FAFC !important;
+    border: 1.5px solid #E2E8F0 !important;
+    color: #64748B !important;
+}
+
+[data-theme="light"] .pill-group input:checked + .pill-item {
+    background-color: #FFF7ED !important;
+    border: 2px solid var(--brand-orange) !important;
+    color: var(--brand-orange) !important;
+}
+
+/* 淺色模式卡片區域 */
+[data-theme="light"] .bg-white\/5 {
+    background-color: #F8FAFC !important;
+    border: 1.5px solid #E2E8F0 !important;
+}
+
+[data-theme="light"] .border-white\/10,
+[data-theme="light"] .border-white\/5 {
+    border-color: #E2E8F0 !important;
+}
+
+/* 淺色模式文字顏色 */
+[data-theme="light"] .text-white {
+    color: #1E293B !important;
+}
+
+[data-theme="light"] .text-slate-300 {
+    color: #475569 !important;
+}
+
+[data-theme="light"] .text-slate-400,
+[data-theme="light"] .text-slate-500 {
+    color: #64748B !important;
+}
+
+[data-theme="light"] .opacity-40 {
+    opacity: 0.6 !important;
+}
+
+[data-theme="light"] .opacity-70 {
+    opacity: 0.8 !important;
+}
+
+/* 淺色模式背景區塊 */
+[data-theme="light"] .bg-white\/5.p-6,
+[data-theme="light"] .bg-white\/5.p-5 {
+    background-color: #F8FAFC !important;
+}
+
+[data-theme="light"] .bg-orange-500\/10 {
+    background-color: #FFF7ED !important;
+}
+
+[data-theme="light"] .border-orange-500\/20 {
+    border-color: #FDBA74 !important;
+}
+
+[data-theme="light"] .bg-slate-950\/80 {
+    background-color: #FFFFFF !important;
+    border-color: #FED7AA !important;
+}
+
+[data-theme="light"] .border-orange-500\/30 {
+    border-color: #FED7AA !important;
+}
+
+/* 淺色模式法律條款區域 */
+[data-theme="light"] .bg-black\/40 {
+    background-color: #F8FAFC !important;
+}
+
+[data-theme="light"] .border-orange-100 {
+    border-color: #FFEDD5 !important;
+}
+
+/* 淺色模式按鈕 */
+[data-theme="light"] #sig-fullscreen-modal .bg-slate-900 {
+    background-color: #F8FAFC !important;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+[data-theme="light"] #sig-fullscreen-modal .bg-slate-900 button {
+    color: #475569 !important;
+}
+
+[data-theme="light"] #sig-fullscreen-modal .bg-slate-100 {
+    background-color: #FFFFFF !important;
+    border-top: 1px solid #E2E8F0;
+}
+
+[data-theme="light"] #sig-fullscreen-modal .bg-slate-100 button {
+    color: #64748B !important;
+}
+
+[data-theme="light"] .bg-red-600\/80 {
+    background-color: #DC2626 !important;
+}
+
+[data-theme="light"] .bg-red-600\/80:hover {
+    background-color: #B91C1C !important;
+}
+
+[data-theme="light"] .bg-slate-700 {
+    background-color: #64748B !important;
+}
+
+[data-theme="light"] .bg-slate-700:hover {
+    background-color: #475569 !important;
+}
+
+/* 淺色模式管理後台表格 */
+[data-theme="light"] #adminView table {
+    border: 1px solid #E2E8F0;
+}
+
+[data-theme="light"] #adminView thead tr {
+    border-bottom: 2px solid #E2E8F0 !important;
+}
+
+[data-theme="light"] #adminView tbody tr {
+    border-bottom: 1px solid #E2E8F0 !important;
+}
+
+[data-theme="light"] #adminView th,
+[data-theme="light"] #adminView td {
+    border-right: 1px solid #F1F5F9;
+}
+
+[data-theme="light"] #adminView th:last-child,
+[data-theme="light"] #adminView td:last-child {
+    border-right: none;
+}
+
+[data-theme="light"] #adminView .glass-card {
+    border: 1px solid #E2E8F0;
+}
+
+[data-theme="light"] #adminView .bg-white\/5 {
+    background-color: #F8FAFC !important;
+    border-color: #E2E8F0 !important;
+}
+
+[data-theme="light"] #adminSearch {
+    background-color: #F8FAFC !important;
+    border-color: #E2E8F0 !important;
+    color: #1E293B !important;
+}
+
+/* ==========================================================================
+   隱藏元素
+   ========================================================================== */
+
+#adminView,
+#detailModal,
+.hidden {
+    display: none;
+}
+
+/* ==========================================================================
+   響應式設計
+   ========================================================================== */
+
+@media (max-width: 480px) {
+    .section-header {
+        font-size: 0.75rem;
+    }
+    
+    .form-input {
+        padding: 0.8rem 1rem;
+    }
+    
+    .signature-hint {
+        font-size: 1.5rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ==========================================================================
+   輔助類別
+   ========================================================================== */
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.3s ease-out;
+}
