@@ -1,0 +1,28 @@
+{
+  "name": "可樂果寵物生活館 - 定型化契約簽署系統",
+  "short_name": "可樂果寵物",
+  "description": "可樂果寵物生活館寵物美容定型化契約線上簽署系統",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#f97316",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["business", "lifestyle"],
+  "lang": "zh-TW",
+  "dir": "ltr",
+  "prefer_related_applications": false
+}
