@@ -16,7 +16,7 @@ export default async function handler(req, res) {
         'api-key': process.env.BREVO_API_KEY // 這裡會讀取 Vercel 後台的隱藏金鑰
       },
       body: JSON.stringify({
-        sender: { name: "可樂果寵物生活館", email: "zs871218@gmail.com" },
+        sender: { name: "可樂果寵物生活館", email: "no-reply@shibastudio.online" },
         to: [{ email: email, name: owner_name }],
         subject: `【可樂果寵物生活館】寵物美容契約副本 - ${pet_name}`,
         htmlContent: htmlContent
